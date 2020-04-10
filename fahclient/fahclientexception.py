@@ -1,0 +1,2 @@
+class FahClientException(Exception):
+    pass

@@ -18,15 +18,17 @@ class LocalClient(object):
 
         slot_pyon = None
         try:
-            with Telnet(server, port, 5) as tn:
-                self.__wait_for_prompt(tn)
-                tn.write("slot-info\n".encode())
-                slot_data = self.__get_data(tn, "\nPyON 1 slots\n")
+            tn = Telnet(server, port, 5)
 
-                self.__wait_for_prompt(tn)
-                tn.write("queue-info\n".encode())
-                queue_data = self.__get_data(tn, "\nPyON 1 units\n")
-                tn.close()
+            self.__wait_for_prompt(tn)
+            tn.write("slot-info\n".encode())
+            slot_data = self.__get_data(tn, "\nPyON 1 slots\n")
+
+            self.__wait_for_prompt(tn)
+            tn.write("queue-info\n".encode())
+            queue_data = self.__get_data(tn, "\nPyON 1 units\n")
+            
+            tn.close()
         except (timeout, EOFError, FahClientException) as e:
             print("Error getting data from {0}: {1}".format(server, str(e)))
             return None

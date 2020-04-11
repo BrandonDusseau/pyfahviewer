@@ -22,7 +22,6 @@ def get_slots():
     for server in servers:
         server_slots = local_client.get_slots_and_queues(server)
         if server_slots is not None:
-            pprint(server_slots)
             slots = slots + server_slots
 
     return jsonify(slots)

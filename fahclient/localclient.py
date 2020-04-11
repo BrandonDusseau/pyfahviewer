@@ -1,10 +1,20 @@
 from .fahclientexception import FahClientException
+from datetime import datetime
 from telnetlib import Telnet
 from socket import timeout
+import hashlib
+import json
 import re
+import time
 
 class LocalClient(object):
+    slot_stats_cache = {}
+    slot_stats_expire = {}
+
     def get_slots_and_queues(self, server, port="36330"):
+        if self.slot_stats_cache.get(server) is not None and round(time.time()) < self.slot_stats_expire.get(server):
+            return json.loads(self.slot_stats_cache.get(server))
+
         slot_pyon = None
         try:
             with Telnet(server, port, 5) as tn:
@@ -22,19 +32,25 @@ class LocalClient(object):
         slots = eval(slot_data, {}, {})
         queues = eval(queue_data, {}, {})
 
+        if slots is None:
+            return None
+
         for s in slots:
             selected_queue = None
-            for q in queues:
-                if q["slot"] != s["id"]:
-                    continue
+            s["server"] = server
+            s["hash"] = hashlib.md5("{0}:{1}".format(server, s["id"]).encode()).hexdigest();
 
-                if (selected_queue is None or
-                    self.__compare_queue_status(q["state"], selected_queue["state"]) >= 0):
-                    q["percentdoneclean"] = round(float(q["percentdone"].replace("%", "")))
-                    selected_queue = q
+            if queues is not None:
+                for q in queues:
+                    if q is None or q["slot"] != s["id"]:
+                        continue
+
+                    if (selected_queue is None or
+                        self.__compare_queue_status(q["state"], selected_queue["state"]) >= 0):
+                        q["percentdoneclean"] = round(float(q["percentdone"].replace("%", "")))
+                        selected_queue = q
 
             s["queue"] = selected_queue
-            s["server"] = server
 
             slot_info = s["description"].split(":")
             s["type"] = slot_info[0]
@@ -44,6 +60,9 @@ class LocalClient(object):
             elif slot_info[0] == "gpu":
                 s["cores"] = None
                 s["name"] = slot_info[2]
+
+        self.slot_stats_cache[server] = json.dumps(slots)
+        self.slot_stats_expire[server] = round(time.time()) + 5
 
         return slots
 

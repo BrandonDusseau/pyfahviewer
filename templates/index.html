@@ -7,6 +7,33 @@
   <script type="text/javascript" src="{{ url_for('static', filename = 'main.js') }}"></script>
 </head>
 <body>
-  <h1>Foo</h1>
+  <template id="leader-template">
+    <table class="leader">
+      <tr>
+        <th>Donor</th>
+        <th>Score</th>
+        <th>WUs</th>
+      </tr>
+    </table>
+  </template>
+  <template id="slot-template">
+    <div class="slot">
+      <div class="slot-title"></div>
+      <div class="slot-server"></div>
+      <div class="slot-time-remaining"></div>
+      <div class="slot-progress"></div>
+    </div>
+  </template>
+  <main>
+    <div class="leaderboard-section">
+      <div class="leader-header">
+        <div id="team-name"></div>
+        <div id="team-rank"></div>
+      </div>
+      <div id="leaderboard">
+      </div>
+    </div>
+    <div class="slot-section" id="slots"></div>
+  </main>
 </body>
 </html>

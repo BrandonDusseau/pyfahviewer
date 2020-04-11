@@ -1,15 +1,17 @@
-from .fahclientexception import FahClientException
-from datetime import datetime
-from telnetlib import Telnet
-from socket import timeout
 import hashlib
 import json
 import re
 import time
+from .fahclientexception import FahClientException
+from datetime import datetime
+from telnetlib import Telnet
+from socket import timeout
+
 
 class LocalClient(object):
     slot_stats_cache = {}
     slot_stats_expire = {}
+
 
     def get_slots_and_queues(self, server, port="36330"):
         if self.slot_stats_cache.get(server) is not None and round(time.time()) < self.slot_stats_expire.get(server):
@@ -66,6 +68,7 @@ class LocalClient(object):
 
         return slots
 
+
     def __compare_queue_status(self, stat1, stat2):
         priority = {
             "UPLOAD": 0,
@@ -78,12 +81,14 @@ class LocalClient(object):
 
         return priority.get(stat1, -1) - priority.get(stat2, -1)
 
+
     def __wait_for_prompt(self, tn):
         prompt = "> "
         prompt_wait = tn.read_until(prompt.encode(), 2)
 
         if prompt_wait[-len(prompt):].decode() != prompt:
             raise FahClientException("Could not read prompt from telnet connection.")
+
 
     def __get_data(self, tn, expected_header):
         response_wait = tn.read_until(expected_header.encode(), 2)

@@ -1,12 +1,13 @@
-from .fahclientexception import FahClientException
-from datetime import datetime
 import json
 import requests
 import time
+from .fahclientexception import FahClientException
+from datetime import datetime
 
 class StatsClient(object):
     team_stats_cache = None
     team_stats_expire = 0
+
 
     def get_team_stats(self, team_num):
         if self.team_stats_cache is not None and round(time.time()) < self.team_stats_expire:

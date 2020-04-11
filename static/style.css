@@ -52,10 +52,12 @@ th, td {
 
 .leaderboard-section tr td:nth-child(2), .leaderboard-section tr th:nth-child(2) {
   width: 25%;
+  text-align: right;
 }
 
 .leaderboard-section tr td:nth-child(3), .leaderboard-section tr th:nth-child(3) {
-  width: 10%;
+  width: 15%;
+  text-align: right;
 }
 
 .leaderboard-section table tr:nth-of-type(2n) {
@@ -80,19 +82,55 @@ th, td {
 
 .slot-section {
   flex: 1 1 auto;
-  background-color: #aaa;
+  background-color: #122838;
   display: flex;
   flex-flow: row wrap;
   align-items: flex-start;
   align-content: flex-start;
   justify-content: center;
   padding: 20px;
+  font-size: 1.3em;
 }
 
 .slot {
   background-color: #fff;
+  padding-bottom: 0;
   flex: 1 0 250px;
-  height: 100px;
-  margin-right: 10px;
-  margin-bottom: 10px;
+  overflow: hidden;
+  margin: 7px;
+}
+
+.slot .text-content {
+  margin: 10px;
+}
+
+.slot .progress-bar {
+  background-color: #ccc;
+  height: 1.2em;
+}
+
+.slot .progress-bar .progress-inner {
+  background-color: #32CD32;
+  height: 100%;
+  width: 0;
+}
+
+.slot .progress-bar .progress-inner.paused {
+  background-color: #FFD700;
+}
+
+.slot .progress-bar .progress-inner.waiting {
+  background-color: #008B8B;
+}
+
+.slot-title {
+  font-weight: 700;
+  font-size: 1.1em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.slot-state {
+  text-transform: capitalize;
 }

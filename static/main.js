@@ -6,6 +6,8 @@
     leaderboard_template = document.getElementById("leader-template").content.firstElementChild;
     slot_template = document.getElementById("slot-template").content.firstElementChild;
     load_data();
+
+    window.setInterval(load_data, 10000);
   });
 
   function load_data() {
@@ -68,13 +70,29 @@
 
     slots_element = document.getElementById("slots");
 
+    slots_element.innerHTML = "";
+
     slot_data.forEach(x => {
       slot_container = slot_template.cloneNode(true);
       slot_container.setAttribute("id", x.hash);
       slot_container.querySelector(".slot-title").innerHTML = format_slot_name(x);
       slot_container.querySelector(".slot-server").innerHTML = x.server;
-      slot_container.querySelector(".slot-progress").innerHTML = x.queue.percentdone;
-      slot_container.querySelector(".slot-time-remaining").innerHTML = x.queue.timeremaining;
+      slot_container.querySelector(".slot-progress").innerHTML =
+        x.queue.percentdone + " &middot; " + x.queue.eta;
+      slot_container.querySelector(".slot-state").innerHTML =
+        x.status.charAt(0).toUpperCase() + x.status.slice(1).toLowerCase();
+
+      state = x.status.toLowerCase();
+      if (state == "paused") {
+        slot_container.querySelector(".progress-inner").classList.add("paused");
+      }
+      else if (state == "ready") {
+        slot_container.querySelector(".progress-inner").classList.add("waiting");
+        slot_container.querySelector(".progress-inner").style.width = "100%";
+      }
+      else {
+        slot_container.querySelector(".progress-inner").style.width = x.queue.percentdoneclean + "%";
+      }
 
       slots_element.appendChild(slot_container);
     });
@@ -85,7 +103,9 @@
       return slot.name + " (" + slot.cores + ")";
     }
 
-    return slot.name;
+    re = /^\w+\s\[(.*)\]/;
+
+    return slot.name.match(re)[1];
   }
 
   function create_element_from_html(html) {

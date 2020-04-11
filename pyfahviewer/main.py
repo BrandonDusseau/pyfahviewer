@@ -8,9 +8,11 @@ app = Flask(__name__)
 stats_client = StatsClient()
 local_client = LocalClient()
 
+
 @app.route("/")
 def index():
     return render_template("index.html")
+
 
 @app.route("/api/team")
 def get_team():
@@ -21,6 +23,7 @@ def get_team():
         abort(500)
 
     return stats_client.get_team_stats(team)
+
 
 @app.route("/api/slots")
 def get_slots():
@@ -37,6 +40,7 @@ def get_slots():
             slots = slots + server_slots
 
     return jsonify(slots)
+
 
 if __name__ == '__main__':
     app.run()

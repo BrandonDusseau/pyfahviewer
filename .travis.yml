@@ -11,7 +11,7 @@ install:
   - "./pycodestyle-travis/install.sh"
 
 script:
-  - "./pycodestyle-travis/scan.sh"
+  - "SKIP_INTERPRETER=true; ./pycodestyle-travis/scan.sh"
 
 deploy:
   provider: releases

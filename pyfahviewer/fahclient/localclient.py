@@ -12,7 +12,6 @@ class LocalClient(object):
     slot_stats_cache = {}
     slot_stats_expire = {}
 
-
     def get_slots_and_queues(self, server, port="36330"):
         if self.slot_stats_cache.get(server) is not None and round(time.time()) < self.slot_stats_expire.get(server):
             return json.loads(self.slot_stats_cache.get(server))
@@ -40,15 +39,15 @@ class LocalClient(object):
         for s in slots:
             selected_queue = None
             s["server"] = server
-            s["hash"] = hashlib.md5("{0}:{1}".format(server, s["id"]).encode()).hexdigest();
+            s["hash"] = hashlib.md5("{0}:{1}".format(server, s["id"]).encode()).hexdigest()
 
             if queues is not None:
                 for q in queues:
                     if q is None or q["slot"] != s["id"]:
                         continue
 
-                    if (selected_queue is None or
-                        self.__compare_queue_status(q["state"], selected_queue["state"]) >= 0):
+                    if (selected_queue is None
+                        or self.__compare_queue_status(q["state"], selected_queue["state"]) >= 0):
                         q["percentdoneclean"] = round(float(q["percentdone"].replace("%", "")))
                         selected_queue = q
 
@@ -68,7 +67,6 @@ class LocalClient(object):
 
         return slots
 
-
     def __compare_queue_status(self, stat1, stat2):
         priority = {
             "UPLOAD": 0,
@@ -81,14 +79,12 @@ class LocalClient(object):
 
         return priority.get(stat1, -1) - priority.get(stat2, -1)
 
-
     def __wait_for_prompt(self, tn):
         prompt = "> "
         prompt_wait = tn.read_until(prompt.encode(), 2)
 
         if prompt_wait[-len(prompt):].decode() != prompt:
             raise FahClientException("Could not read prompt from telnet connection.")
-
 
     def __get_data(self, tn, expected_header):
         response_wait = tn.read_until(expected_header.encode(), 2)

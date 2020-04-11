@@ -14,12 +14,49 @@ def get_slots_and_queues(server, port="36330"):
             __wait_for_prompt(tn)
             tn.write("queue-info\n".encode())
             queue_data = __get_data(tn, "\nPyON 1 units\n")
-    except (timeout, EOFError, FahClientException):
+    except (timeout, EOFError, FahClientException) as e:
+        print("Error getting data from {0}: {1}".format(server, str(e)))
         return None
 
     slots = eval(slot_data, {}, {})
     queues = eval(queue_data, {}, {})
-    return {"slots": slots, "queues": queues}
+
+    for s in slots:
+        selected_queue = None
+        for q in queues:
+            if q["slot"] != s["id"]:
+                continue
+
+            if (selected_queue is None or
+                __compare_queue_status(q["state"], selected_queue["state"]) >= 0):
+                q["percentdoneclean"] = round(float(q["percentdone"].replace("%", "")))
+                selected_queue = q
+
+        s["queue"] = selected_queue
+        s["server"] = server
+
+        slot_info = s["description"].split(":")
+        s["type"] = slot_info[0]
+        if slot_info[0] == "cpu":
+            s["cores"] = slot_info[1]
+            s["name"] = "CPU"
+        elif slot_info[0] == "gpu":
+            s["cores"] = None
+            s["name"] = slot_info[2]
+
+    return slots
+
+def __compare_queue_status(stat1, stat2):
+    priority = {
+        "UPLOAD": 0,
+        "DOWNLOAD": 1,
+        "STOPPING": 2,
+        "PAUSED": 3,
+        "FINISHING": 4,
+        "READY": 5
+    }
+
+    return priority.get(stat1, -1) - priority.get(stat2, -1)
 
 def __wait_for_prompt(tn):
     prompt = "> "

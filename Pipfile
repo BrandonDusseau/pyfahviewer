@@ -8,6 +8,7 @@ verify_ssl = true
 [packages]
 pyon-lib = "*"
 requests = "*"
+flask = "*"
 
 [requires]
 python_version = "3.8"

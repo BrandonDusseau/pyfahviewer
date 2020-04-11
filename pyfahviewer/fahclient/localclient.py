@@ -26,6 +26,7 @@ class LocalClient(object):
                 self.__wait_for_prompt(tn)
                 tn.write("queue-info\n".encode())
                 queue_data = self.__get_data(tn, "\nPyON 1 units\n")
+                tn.close()
         except (timeout, EOFError, FahClientException) as e:
             print("Error getting data from {0}: {1}".format(server, str(e)))
             return None

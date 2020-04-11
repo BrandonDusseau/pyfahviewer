@@ -1,7 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  border: none;
 }
 
 body, html, * body, * body html, main {
@@ -13,21 +16,62 @@ main {
   display: flex;
   flex-flow: row nowrap;
   height: 100%;
+  font-family: 'Roboto', sans-serif;
 }
 
 .leaderboard-section {
   flex: 0 0 66%;
   background-color: #ccc;
+  display: flex;
+  flex-flow: column nowrap;
+  font-size: 2.5em;
+}
+
+.leaderboard-container {
+  flex: 1 1 auto;
 }
 
 .leaderboard-section table {
   width: 100%;
+  height: 100%;
+  background-color: #ccc;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+table .head-row {
+  background-color: SteelBlue;
+  color: #fff;
+}
+
+th, td {
+  font-weight: 400;
+  padding: 0 10px;
+  text-align: left;
+}
+
+.leaderboard-section tr td:nth-child(2), .leaderboard-section tr th:nth-child(2) {
+  width: 25%;
+}
+
+.leaderboard-section tr td:nth-child(3), .leaderboard-section tr th:nth-child(3) {
+  width: 10%;
+}
+
+.leaderboard-section table tr:nth-of-type(2n) {
+  background-color: #fff;
 }
 
 .leader-header {
+  flex: 0 0 auto;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
+  color: #fff;
+  background-color: #18486B;
+  font-size: 1.2em;
+  font-weight: 700;
+  padding: 10px;
 }
 
 .leader-header div {
@@ -47,7 +91,7 @@ main {
 
 .slot {
   background-color: #fff;
-  flex: 0 0 250px;
+  flex: 1 0 250px;
   height: 100px;
   margin-right: 10px;
   margin-bottom: 10px;

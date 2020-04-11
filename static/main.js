@@ -46,14 +46,15 @@
     document.getElementById("team-name").innerHTML = team_data.name;
     document.getElementById("team-rank").innerHTML = "Rank: " + Number(team_data.rank).toLocaleString();
 
-    team_data.donors.forEach(x => {
+    for (i = 0; i < 15; i++) {
+      donor = team_data.donors[i];
       table.querySelector("tbody").appendChild(create_element_from_html(
         "<tr><td>" +
-        x.name + "</td><td>" +
-        Number(x.credit).toLocaleString() + "</td><td>" +
-        Number(x.wus).toLocaleString() + "</td></tr>"
+        donor.name + "</td><td>" +
+        Number(donor.credit).toLocaleString() + "</td><td>" +
+        Number(donor.wus).toLocaleString() + "</td></tr>"
       ));
-    });
+    }
 
     leader_container = document.getElementById("leaderboard");
     leader_container.innerHTML = "";

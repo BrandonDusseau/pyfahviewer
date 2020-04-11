@@ -4,6 +4,9 @@ python:
   - '3.7'
   - '3.8'
 
+env:
+  - SKIP_INTERPRETER=true
+
 before_install:
       - git clone https://github.com/TravisToolbox/pycodestyle-travis.git
 install:
@@ -11,7 +14,7 @@ install:
   - "./pycodestyle-travis/install.sh"
 
 script:
-  - "SKIP_INTERPRETER=true; ./pycodestyle-travis/scan.sh"
+  - "./pycodestyle-travis/scan.sh"
 
 deploy:
   provider: releases

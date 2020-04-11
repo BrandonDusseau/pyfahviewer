@@ -17,9 +17,9 @@ This application serves as a wall display for viewing your Folding@Home team ran
 
 2. Set up your Folding@Home clients to allow access from any IP.
 
-  1. From the Folding@Home client, go to Configure > Remote Access.
+   1. From the Folding@Home client, go to Configure > Remote Access.
 
-  2. Under **Passwordless IP Address Restriction** set value `0.0.0.0/0` and **Save**.
+   2. Under **Passwordless IP Address Restriction** set value `0.0.0.0/0` and **Save**.
 
 3. Install dependencies and set up the virtual environment:
     ```bash

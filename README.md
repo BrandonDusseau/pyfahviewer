@@ -30,7 +30,8 @@ This application serves as a wall display for viewing your Folding@Home team ran
 
 4. Start the application while inside the virtualenv:
     ```bash
-    python pyfahviewer/main.py // On some systems it may be necessary to change `python` to `python3` for 3.x.
+    // On some systems it may be necessary to change 'python' to 'python3' for Python 3.x.
+    python pyfahviewer/main.py
     ```
 
 5. Navigate to `http://localhost:5000` in your browser.

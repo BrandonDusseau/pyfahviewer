@@ -3,7 +3,6 @@ from concurrent.futures import ThreadPoolExecutor
 from config import get_config
 from fahclient import LocalClient, StatsClient
 from flask import Flask, render_template, jsonify, abort
-from pprint import pprint
 
 app = Flask(__name__)
 stats_client = StatsClient()

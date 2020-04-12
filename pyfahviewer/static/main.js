@@ -127,7 +127,7 @@
       return slot.name + " (" + slot.cores + ")";
     }
 
-    re = /^\w+\s\[(.*)\]/;
+    re = /^[^\[]*\[(.*)\]/;
 
     return slot.name.match(re)[1];
   }

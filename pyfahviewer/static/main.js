@@ -1,6 +1,7 @@
 (function() {
   var leaderboard_template = null;
   var slot_template = null;
+  var fetching = false;
 
   document.addEventListener("DOMContentLoaded", function () {
     leaderboard_template = document.getElementById("leader-template").content.firstElementChild;
@@ -11,15 +12,38 @@
   });
 
   function load_data() {
+    if (fetching) {
+      console.log("Did not fetch because a fetch is already in progress.")
+      return false;
+    }
+
+    fetching = true;
+    done_fetching_team = false;
+    done_fetching_slots = false;
+
     host = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
 
     // Get team stats
     fetch(host + "/api/team")
-      .then((team_data) => handle_team_response(team_data));
+      .then((result) => {
+        handle_team_response(result);
 
-    // Get slot stats
+        done_fetching_team=true;
+        if (done_fetching_slots) {
+          fetching = false;
+        }
+      })
+
+    // Get slot info
     fetch(host + "/api/slots")
-      .then((slot_data) => handle_slot_response(slot_data))
+      .then((result) => {
+        handle_slot_response(result);
+
+        done_fetching_slots=true;
+        if (done_fetching_team) {
+          fetching = false;
+        }
+      })
   }
 
   function handle_team_response(response) {

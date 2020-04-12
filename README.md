@@ -6,7 +6,7 @@ This application serves as a wall display for viewing your Folding@Home team ran
 
 ## Requirements
 
- * Python 3.x
+ * Python 3.5+
  * `virtualenv` (`pip install virtualenv`)
 
 ## Getting Started

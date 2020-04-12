@@ -1,4 +1,5 @@
 #!/usr/bin/python
+from concurrent.futures import ThreadPoolExecutor
 from config import get_config
 from fahclient import LocalClient, StatsClient
 from flask import Flask, render_template, jsonify, abort
@@ -33,11 +34,13 @@ def get_slots():
         print("Configuration error: `servers` must be a list and not null.")
         abort(500)
 
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        slot_results = executor.map(local_client.get_slots_and_queues, servers)
+
     slots = []
-    for server in servers:
-        server_slots = local_client.get_slots_and_queues(server)
-        if server_slots is not None:
-            slots = slots + server_slots
+    for slot_result in slot_results:
+        if slot_result is not None:
+            slots = slots + slot_result
 
     return jsonify(slots)
 

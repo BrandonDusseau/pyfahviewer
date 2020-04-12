@@ -16,6 +16,8 @@ class LocalClient(object):
         if self.slot_stats_cache.get(server) is not None and round(time.time()) < self.slot_stats_expire.get(server):
             return json.loads(self.slot_stats_cache.get(server))
 
+        print("Contacting " + server)
+
         slot_pyon = None
         try:
             tn = Telnet(server, port, 5)
@@ -29,7 +31,7 @@ class LocalClient(object):
             queue_data = self.__get_data(tn, "\nPyON 1 units\n")
 
             tn.close()
-        except (timeout, EOFError, FahClientException) as e:
+        except (timeout, EOFError, FahClientException, OSError) as e:
             print("Error getting data from {0}: {1}".format(server, str(e)))
             return None
 
@@ -68,12 +70,13 @@ class LocalClient(object):
         self.slot_stats_cache[server] = json.dumps(slots)
         self.slot_stats_expire[server] = round(time.time()) + 5
 
+        print("Finished slots for " + server)
         return slots
 
     def __compare_queue_status(self, stat1, stat2):
         priority = {
-            "UPLOAD": 0,
-            "DOWNLOAD": 1,
+            "UPLOADING": 0,
+            "DOWNLOADING": 1,
             "STOPPING": 2,
             "PAUSED": 3,
             "FINISHING": 4,

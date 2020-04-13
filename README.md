@@ -4,7 +4,7 @@
 
 This application serves as a wall display for viewing your Folding@Home team ranking and work unit progress.
 
-![Demo screenshot](demoscreenshot.png)
+![Demo screenshot](demoscreenshot.png | width=750)
 
 ## Requirements
 

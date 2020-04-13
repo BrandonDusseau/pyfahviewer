@@ -77,10 +77,11 @@ class LocalClient(object):
         priority = {
             "UPLOADING": 0,
             "DOWNLOADING": 1,
-            "STOPPING": 2,
-            "PAUSED": 3,
-            "FINISHING": 4,
-            "READY": 5
+            "READY": 2,
+            "STOPPING": 3,
+            "PAUSED": 4,
+            "FINISHING": 5,
+            "RUNNING": 6
         }
 
         return priority.get(stat1, -1) - priority.get(stat2, -1)

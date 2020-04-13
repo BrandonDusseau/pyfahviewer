@@ -4,6 +4,8 @@
 
 This application serves as a wall display for viewing your Folding@Home team ranking and work unit progress.
 
+![Demo screenshot](demoscreenshot.png)
+
 ## Requirements
 
  * Python 3.5+

@@ -107,15 +107,14 @@
         x.status.charAt(0).toUpperCase() + x.status.slice(1).toLowerCase();
 
       state = x.status.toLowerCase();
+      slot_container.querySelector(".progress-inner").style.width = x.queue.percentdoneclean + "%";
+      
       if (state == "paused") {
         slot_container.querySelector(".progress-inner").classList.add("paused");
       }
       else if (state == "ready") {
         slot_container.querySelector(".progress-inner").classList.add("waiting");
         slot_container.querySelector(".progress-inner").style.width = "100%";
-      }
-      else {
-        slot_container.querySelector(".progress-inner").style.width = x.queue.percentdoneclean + "%";
       }
 
       slots_element.appendChild(slot_container);

@@ -4,7 +4,7 @@
   var leaderboardTemplate = null;
   var slotTemplate = null;
   var fetching = false;
-  
+
   document.addEventListener("DOMContentLoaded", function () {
     leaderboardTemplate = document.getElementById("leader-template").content.firstElementChild;
     slotTemplate = document.getElementById("slot-template").content.firstElementChild;
@@ -88,14 +88,17 @@
       slotContainer.setAttribute("id", x.hash);
       slotContainer.querySelector(".slot-title").innerHTML = formatSlotName(x);
       slotContainer.querySelector(".slot-server").innerHTML = x.server;
-      slotContainer.querySelector(".slot-progress").innerHTML =
-        x.queue.percentdone + " &middot; " + x.queue.eta;
+      slotContainer.querySelector(".slot-points").innerHTML =
+        Number(x.queue.creditestimate).toLocaleString() + " points";
+      slotContainer.querySelectorAll(".slot-progress").forEach(
+        container => container.innerHTML = x.queue.percentdone + " &middot; " + x.queue.eta
+      );
       slotContainer.querySelector(".slot-state").innerHTML =
         x.status.charAt(0).toUpperCase() + x.status.slice(1).toLowerCase();
 
       let state = x.status.toLowerCase();
       slotContainer.querySelector(".progress-inner").style.width = x.queue.percentdoneclean + "%";
-      
+
       if (state === "paused") {
         slotContainer.querySelector(".progress-inner").classList.add("paused");
       }

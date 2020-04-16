@@ -106,17 +106,33 @@ th, td {
 
 .slot .progress-bar {
   background-color: #ccc;
-  height: 1.2em;
+  min-height: calc(1.2em + 6px);
+  position: relative;
+  overflow: hidden;
+}
+
+.slot .progress-bar .slot-progress {
+  display: inline-block;
+  padding: 3px 10px;
 }
 
 .slot .progress-bar .progress-inner {
-  background-color: #32CD32;
+  background-color: #158800;
+  color: #fff;
   height: 100%;
   width: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-shadow: 1px 1px 1px #000;
 }
 
 .slot .progress-bar .progress-inner.paused {
   background-color: #FFD700;
+  color: #000;
+  text-shadow: none;
 }
 
 .slot .progress-bar .progress-inner.waiting {

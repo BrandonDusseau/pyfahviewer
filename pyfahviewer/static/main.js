@@ -1,80 +1,67 @@
 (function() {
-  var leaderboard_template = null;
-  var slot_template = null;
+  const host = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
+
+  var leaderboardTemplate = null;
+  var slotTemplate = null;
   var fetching = false;
-
+  
   document.addEventListener("DOMContentLoaded", function () {
-    leaderboard_template = document.getElementById("leader-template").content.firstElementChild;
-    slot_template = document.getElementById("slot-template").content.firstElementChild;
-    load_data();
+    leaderboardTemplate = document.getElementById("leader-template").content.firstElementChild;
+    slotTemplate = document.getElementById("slot-template").content.firstElementChild;
+    loadData();
 
-    window.setInterval(load_data, 10000);
+    window.setInterval(loadData, 10000);
   });
 
-  function load_data() {
+  async function loadData() {
     if (fetching) {
-      console.log("Did not fetch because a fetch is already in progress.")
+      console.log("Did not fetch because a fetch is already in progress.");
       return false;
     }
 
     fetching = true;
-    done_fetching_team = false;
-    done_fetching_slots = false;
 
-    host = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
+    await Promise.all([
+      refreshTeam(),
+      refreshSlots()
+    ]);
 
-    // Get team stats
-    fetch(host + "/api/team")
-      .then((result) => {
-        handle_team_response(result);
-
-        done_fetching_team=true;
-        if (done_fetching_slots) {
-          fetching = false;
-        }
-      })
-
-    // Get slot info
-    fetch(host + "/api/slots")
-      .then((result) => {
-        handle_slot_response(result);
-
-        done_fetching_slots=true;
-        if (done_fetching_team) {
-          fetching = false;
-        }
-      })
+    fetching = false;
   }
 
-  function handle_team_response(response) {
+  async function refreshTeam(response) {
+    let response = await fetch(`${host}/api/team`);
     if (!response.ok) {
       return;
     }
 
-    response.json().then((team_data) => render_team_stats(team_data));
+    let teamData = await response.json();
+    renderTeamStats(teamData);
   }
 
-  function handle_slot_response(response) {
+  async function refreshSlots(response) {
+    let response = await fetch(`${host}/api/slots`);
     if (!response.ok) {
       return;
     }
 
-    response.json().then((slot_data) => render_slot_stats(slot_data));
+    let slotData = await response.json();
+    renderSlotStats(slotData);
   }
 
-  function render_team_stats(team_data) {
-    if (team_data == null) {
+  function renderTeamStats(team_data) {
+    if (team_data === null) {
       return;
     }
 
-    table = leaderboard_template.cloneNode(true);
+    let table = leaderboardTemplate.cloneNode(true);
 
     document.getElementById("team-name").innerHTML = team_data.name;
     document.getElementById("team-rank").innerHTML = "Rank: " + Number(team_data.rank).toLocaleString();
 
     for (i = 0; i < 15; i++) {
-      donor = team_data.donors[i];
-      table.querySelector("tbody").appendChild(create_element_from_html(
+      let donor = team_data.donors[i];
+      table.querySelector("tbody").appendChild(createElementFromHtml(
         "<tr><td>" +
         donor.name + "</td><td>" +
         Number(donor.credit).toLocaleString() + "</td><td>" +
@@ -82,57 +69,56 @@
       ));
     }
 
-    leader_container = document.getElementById("leaderboard");
-    leader_container.innerHTML = "";
-    leader_container.appendChild(table);
+    let leaderContainer = document.getElementById("leaderboard");
+    leaderContainer.innerHTML = "";
+    leaderContainer.appendChild(table);
   }
 
-  function render_slot_stats(slot_data) {
-    if (slot_data == null) {
+  function renderSlotStats(slotData) {
+    if (slotData === null) {
       return;
     }
 
-    slots_element = document.getElementById("slots");
+    let slotsElement = document.getElementById("slots");
 
-    slots_element.innerHTML = "";
+    slotsElement.innerHTML = "";
 
-    slot_data.forEach(x => {
-      slot_container = slot_template.cloneNode(true);
-      slot_container.setAttribute("id", x.hash);
-      slot_container.querySelector(".slot-title").innerHTML = format_slot_name(x);
-      slot_container.querySelector(".slot-server").innerHTML = x.server;
-      slot_container.querySelector(".slot-progress").innerHTML =
+    slotData.forEach(x => {
+      let slotContainer = slotTemplate.cloneNode(true);
+      slotContainer.setAttribute("id", x.hash);
+      slotContainer.querySelector(".slot-title").innerHTML = formatSlotName(x);
+      slotContainer.querySelector(".slot-server").innerHTML = x.server;
+      slotContainer.querySelector(".slot-progress").innerHTML =
         x.queue.percentdone + " &middot; " + x.queue.eta;
-      slot_container.querySelector(".slot-state").innerHTML =
+      slotContainer.querySelector(".slot-state").innerHTML =
         x.status.charAt(0).toUpperCase() + x.status.slice(1).toLowerCase();
 
-      state = x.status.toLowerCase();
-      slot_container.querySelector(".progress-inner").style.width = x.queue.percentdoneclean + "%";
+      let state = x.status.toLowerCase();
+      slotContainer.querySelector(".progress-inner").style.width = x.queue.percentdoneclean + "%";
       
       if (state == "paused") {
-        slot_container.querySelector(".progress-inner").classList.add("paused");
+        slotContainer.querySelector(".progress-inner").classList.add("paused");
       }
       else if (state == "ready") {
-        slot_container.querySelector(".progress-inner").classList.add("waiting");
-        slot_container.querySelector(".progress-inner").style.width = "100%";
+        slotContainer.querySelector(".progress-inner").classList.add("waiting");
+        slotContainer.querySelector(".progress-inner").style.width = "100%";
       }
 
-      slots_element.appendChild(slot_container);
+      slotsElement.appendChild(slotContainer);
     });
   }
 
-  function format_slot_name(slot) {
+  function formatSlotName(slot) {
     if (slot.type == "cpu") {
       return slot.name + " (" + slot.cores + ")";
     }
 
-    re = /^[^\[]*\[(.*)\]/;
-
+    let re = /^[^\[]*\[(.*)\]/;
     return slot.name.match(re)[1];
   }
 
-  function create_element_from_html(html) {
-    var template = document.createElement('template');
+  function createElementFromHtml(html) {
+    let template = document.createElement('template');
     html = html.trim();
     template.innerHTML = html;
     return template.content.firstChild;

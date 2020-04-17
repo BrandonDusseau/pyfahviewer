@@ -10,6 +10,7 @@ This application serves as a wall display for viewing your Folding@Home team ran
 
  * Python 3.5+
  * `virtualenv` (`pip install virtualenv`)
+ * FAHClient version 7.4+
 
 ## Getting Started
 

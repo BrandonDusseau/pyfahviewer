@@ -49,18 +49,18 @@
     renderSlotStats(slotData);
   }
 
-  function renderTeamStats(team_data) {
-    if (team_data === null) {
+  function renderTeamStats(teamData) {
+    if (teamData === null) {
       return;
     }
 
     let table = leaderboardTemplate.cloneNode(true);
 
-    document.getElementById("team-name").innerHTML = team_data.name;
-    document.getElementById("team-rank").innerHTML = "Rank: " + Number(team_data.rank).toLocaleString();
+    document.getElementById("team-name").innerHTML = teamData.name;
+    document.getElementById("team-rank").innerHTML = "Rank: " + Number(teamData.rank).toLocaleString();
 
     for (i = 0; i < 15; i++) {
-      let donor = team_data.donors[i];
+      let donor = teamData.donors[i];
       table.querySelector("tbody").appendChild(createElementFromHtml(
         "<tr><td>" +
         donor.name + "</td><td>" +
@@ -96,10 +96,10 @@
       let state = x.status.toLowerCase();
       slotContainer.querySelector(".progress-inner").style.width = x.queue.percentdoneclean + "%";
       
-      if (state == "paused") {
+      if (state === "paused") {
         slotContainer.querySelector(".progress-inner").classList.add("paused");
       }
-      else if (state == "ready") {
+      else if (state === "ready") {
         slotContainer.querySelector(".progress-inner").classList.add("waiting");
         slotContainer.querySelector(".progress-inner").style.width = "100%";
       }
@@ -109,7 +109,7 @@
   }
 
   function formatSlotName(slot) {
-    if (slot.type == "cpu") {
+    if (slot.type === "cpu") {
       return slot.name + " (" + slot.cores + ")";
     }
 

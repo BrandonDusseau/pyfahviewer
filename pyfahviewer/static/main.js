@@ -29,7 +29,7 @@
     fetching = false;
   }
 
-  async function refreshTeam(response) {
+  async function refreshTeam() {
     let response = await fetch(`${host}/api/team`);
     if (!response.ok) {
       return;
@@ -39,7 +39,7 @@
     renderTeamStats(teamData);
   }
 
-  async function refreshSlots(response) {
+  async function refreshSlots() {
     let response = await fetch(`${host}/api/slots`);
     if (!response.ok) {
       return;

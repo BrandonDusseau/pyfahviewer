@@ -1,5 +1,5 @@
 (function() {
-  const host = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
+  const host = `${location.protocol}//${location.hostname}` + (location.port ? ':' + location.port : '');
 
   var leaderboardTemplate = null;
   var slotTemplate = null;

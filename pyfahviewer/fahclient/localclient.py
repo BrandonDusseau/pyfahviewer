@@ -4,6 +4,7 @@ import re
 import time
 from .fahclientexception import FahClientException
 from datetime import datetime
+from math import floor
 from telnetlib import Telnet
 from socket import timeout
 
@@ -53,7 +54,7 @@ class LocalClient(object):
 
                     if (selected_queue is None
                         or self.__compare_queue_status(q["state"], selected_queue["state"]) >= 0):
-                        q["percentdoneclean"] = round(float(q["percentdone"].replace("%", "")))
+                        q["percentdoneclean"] = floor(float(q["percentdone"].replace("%", "")))
                         selected_queue = q
 
             s["queue"] = selected_queue

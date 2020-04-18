@@ -62,7 +62,7 @@
     for (i = 0; i < 15; i++) {
       let donor = teamData.donors[i];
       table.querySelector("tbody").appendChild(createElementFromHtml(
-        "<tr><td>" +
+        "<tr><td class=\"overflow-el\">" +
         donor.name + "</td><td>" +
         Number(donor.credit).toLocaleString() + "</td><td>" +
         Number(donor.wus).toLocaleString() + "</td></tr>"
@@ -85,27 +85,34 @@
 
     slotData.forEach(x => {
       let slotContainer = slotTemplate.cloneNode(true);
+
+      let percentCompleteText = x.queue.percentdone + " &middot; " + x.queue.eta;
+      let percentDone = x.queue.percentdoneclean;
+      let pointsDisplay = Number(x.queue.creditestimate).toLocaleString();
+
+      // Note: FINISHING and READY use default styling.
+      let state = x.status.toLowerCase();
+      if (state === "paused" || state === "stopping") {
+        slotContainer.querySelector(".progress-inner").classList.add("paused");
+      }
+      else if (state === "ready" || state === "uploading" || state === "downloading") {
+        slotContainer.querySelector(".progress-inner").classList.add("waiting");
+        percentDone = 100;
+        percentCompleteText = "Waiting...";
+        pointsDisplay = "&mdash;";
+      }
+
       slotContainer.setAttribute("id", x.hash);
       slotContainer.querySelector(".slot-title").innerHTML = formatSlotName(x);
       slotContainer.querySelector(".slot-server").innerHTML = x.server;
-      slotContainer.querySelector(".slot-points").innerHTML =
-        Number(x.queue.creditestimate).toLocaleString() + " points";
+      slotContainer.querySelector(".slot-points").innerHTML = pointsDisplay + " points";
       slotContainer.querySelectorAll(".slot-progress").forEach(
-        container => container.innerHTML = x.queue.percentdone + " &middot; " + x.queue.eta
+        container => container.innerHTML = percentCompleteText
       );
       slotContainer.querySelector(".slot-state").innerHTML =
         x.status.charAt(0).toUpperCase() + x.status.slice(1).toLowerCase();
 
-      let state = x.status.toLowerCase();
-      slotContainer.querySelector(".progress-inner").style.width = x.queue.percentdoneclean + "%";
-
-      if (state === "paused") {
-        slotContainer.querySelector(".progress-inner").classList.add("paused");
-      }
-      else if (state === "ready") {
-        slotContainer.querySelector(".progress-inner").classList.add("waiting");
-        slotContainer.querySelector(".progress-inner").style.width = "100%";
-      }
+      slotContainer.querySelector(".progress-inner").style.width = percentDone + "%";
 
       slotsElement.appendChild(slotContainer);
     });

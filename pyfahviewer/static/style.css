@@ -139,13 +139,12 @@ th, td {
   background-color: #008B8B;
 }
 
-.slot .progress-bar .progress-inner.waiting .slot-progress {
-  display: none;
-}
-
 .slot-title {
   font-weight: 700;
   font-size: 1.1em;
+}
+
+.overflow-el {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;

@@ -1,6 +1,4 @@
 (function() {
-  const host = `${location.protocol}//${location.hostname}` + (location.port ? ':' + location.port : '');
-
   var leaderboardTemplate = null;
   var slotTemplate = null;
   var fetching = false;
@@ -30,8 +28,14 @@
   }
 
   async function refreshTeam() {
-    let response = await fetch(`${host}/api/team`);
-    if (!response.ok) {
+    let response = null;
+    try {
+      response = await fetch("/api/team");
+    } catch (e) {
+      console.log("Error when fetching team: " + e);
+    }
+
+    if (!response || !response.ok) {
       return;
     }
 
@@ -40,8 +44,14 @@
   }
 
   async function refreshSlots() {
-    let response = await fetch(`${host}/api/slots`);
-    if (!response.ok) {
+    let response = null;
+    try {
+      response = await fetch("/api/slots");
+    } catch (e) {
+      console.log("Error when fetching slots: " + e);
+    }
+
+    if (!response || !response.ok) {
       return;
     }
 

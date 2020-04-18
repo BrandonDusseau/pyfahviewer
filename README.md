@@ -56,6 +56,6 @@ The application uses a JSON-based configuration file, like so:
 
 The parameters are as follows:
 
- * `team`: Your team id, used to display the leaderboard. You can find this in your Folding@Home client.
+ * `team`: Your team id, used to display the leaderboard. You can find this in your Folding@Home client. If this option is omitted, the leaderboard will not display.
 
- * `servers`: This is a list of IP addresses of servers running the Folding@Home client. Using hostname may work but is not recommended.
+ * `servers`: This is a list of IP addresses of servers running the Folding@Home client. If this option is omitted or the list is empty, the slots view will not display.

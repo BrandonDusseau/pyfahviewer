@@ -64,10 +64,18 @@
       return;
     }
 
+    if (teamData.disabled) {
+      document.getElementById("leaderboard-section").classList.add("hidden");
+      return;
+    } else {
+      document.getElementById("leaderboard-section").classList.remove("hidden");
+    }
+
     let table = leaderboardTemplate.cloneNode(true);
 
     document.getElementById("team-name").innerHTML = teamData.name;
     document.getElementById("team-rank").innerHTML = "Rank: " + Number(teamData.rank).toLocaleString();
+    document.getElementById("leader-header").classList.remove("hidden");
 
     for (i = 0; i < 15; i++) {
       let donor = teamData.donors[i];
@@ -89,11 +97,18 @@
       return;
     }
 
+    if (slotData.disabled) {
+      document.getElementById("slots").classList.add("hidden");
+      return;
+    } else {
+      document.getElementById("slots").classList.remove("hidden");
+    }
+
     let slotsElement = document.getElementById("slots");
 
     slotsElement.innerHTML = "";
 
-    slotData.forEach(x => {
+    slotData.slots.forEach(x => {
       let slotContainer = slotTemplate.cloneNode(true);
 
       let percentCompleteText = x.queue.percentdone + " &middot; " + x.queue.eta;

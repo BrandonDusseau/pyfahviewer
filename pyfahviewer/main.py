@@ -19,8 +19,8 @@ def get_team():
     team = get_config('team')
 
     if (team is None or type(team) is not str):
-        print('Configuration error: `team` must be a string and not null.')
-        abort(500)
+        print("Returning no team data because a team number is not configured.")
+        return {"disabled": True}
 
     return stats_client.get_team_stats(team)
 
@@ -29,9 +29,13 @@ def get_team():
 def get_slots():
     servers = get_config('servers')
 
-    if servers is None or type(servers) is not list:
-        print('Configuration error: `servers` must be a list and not null.')
+    if servers is not None and type(servers) is not list:
+        print('Configuration error: `servers` must be a list.')
         abort(500)
+
+    if servers is None or len(servers) == 0:
+        print("Returning no slot data because no servers are configured.")
+        return {"disabled": True}
 
     with ThreadPoolExecutor(max_workers=3) as executor:
         slot_results = executor.map(local_client.get_slots_and_queues, servers)
@@ -41,7 +45,7 @@ def get_slots():
         if slot_result is not None:
             slots = slots + slot_result
 
-    return jsonify(slots)
+    return {"slots": slots}
 
 
 if __name__ == '__main__':

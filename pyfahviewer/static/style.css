@@ -19,12 +19,26 @@ main {
   font-family: 'Roboto', sans-serif;
 }
 
+.overflow-el {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
 .leaderboard-section {
-  flex: 0 0 66%;
-  background-color: #ccc;
+  flex: 1 0 66%;
+  background-color: #aaa;
   display: flex;
   flex-flow: column nowrap;
   font-size: 2.5em;
+}
+
+.leaderboard-section.hidden {
+  display: none;
 }
 
 .leaderboard-container {
@@ -81,7 +95,7 @@ th, td {
 }
 
 .slot-section {
-  flex: 1 1 auto;
+  flex: 1 0 34%;
   background-color: #122838;
   display: flex;
   flex-flow: row wrap;
@@ -90,6 +104,10 @@ th, td {
   justify-content: center;
   padding: 20px;
   font-size: 1.3em;
+}
+
+.slot-section.hidden {
+  display: none;
 }
 
 .slot {
@@ -142,12 +160,6 @@ th, td {
 .slot-title {
   font-weight: 700;
   font-size: 1.1em;
-}
-
-.overflow-el {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
 }
 
 .slot-state {

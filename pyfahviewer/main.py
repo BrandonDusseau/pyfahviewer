@@ -9,28 +9,28 @@ stats_client = StatsClient()
 local_client = LocalClient()
 
 
-@app.route("/")
+@app.route('/')
 def index():
-    return render_template("index.html")
+    return render_template('index.html')
 
 
-@app.route("/api/team")
+@app.route('/api/team')
 def get_team():
-    team = get_config("team")
+    team = get_config('team')
 
     if (team is None or type(team) is not str):
-        print("Configuration error: `team` must be a string and not null.")
+        print('Configuration error: `team` must be a string and not null.')
         abort(500)
 
     return stats_client.get_team_stats(team)
 
 
-@app.route("/api/slots")
+@app.route('/api/slots')
 def get_slots():
-    servers = get_config("servers")
+    servers = get_config('servers')
 
     if servers is None or type(servers) is not list:
-        print("Configuration error: `servers` must be a list and not null.")
+        print('Configuration error: `servers` must be a list and not null.')
         abort(500)
 
     with ThreadPoolExecutor(max_workers=3) as executor:
@@ -45,4 +45,4 @@ def get_slots():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0')

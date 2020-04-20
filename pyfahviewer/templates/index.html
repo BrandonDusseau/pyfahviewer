@@ -20,9 +20,13 @@
     <div class="slot">
       <div class="text-content">
         <div class="slot-title overflow-el"></div>
-        <div class="slot-server overflow-el"></div>
-        <div class="slot-state"></div>
-        <div class="slot-points"></div>
+        <div class="minimal-slot-info overflow-el">
+          <span class="slot-server"></span> &middot;
+          <span class="slot-state"></span>
+        </div>
+        <div class="slot-server hide-on-tms overflow-el"></div>
+        <div class="slot-state hide-on-tms"></div>
+        <div class="slot-points hide-on-tms"></div>
       </div>
       <div class="progress-bar">
         <span class="slot-progress"></span>
@@ -35,8 +39,8 @@
   <main>
     <div id="leaderboard-section" class="leaderboard-section">
       <div id="leader-header" class="leader-header hidden">
-        <div id="team-name" class="overflow-el"></div>
-        <div id="team-rank"></div>
+        <div id="team-name" class="header-team overflow-el"></div>
+        <div id="team-rank" class="header-rank"></div>
       </div>
       <div id="leaderboard" class="leaderboard-container">
       </div>

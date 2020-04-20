@@ -34,7 +34,7 @@ main {
   background-color: #aaa;
   display: flex;
   flex-flow: column nowrap;
-  font-size: 2.5em;
+  font-size: 3.2vh;
 }
 
 .leaderboard-section.hidden {
@@ -59,7 +59,6 @@ table .head-row {
 }
 
 th, td {
-  font-weight: 400;
   padding: 0 10px;
   text-align: left;
 }
@@ -90,24 +89,42 @@ th, td {
   padding: 10px;
 }
 
-.leader-header div {
+.leader-header .header-team {
+  flex: 1 1 auto;
+  margin-right: 10px;
+}
+
+.leader-header .header-rank {
   flex: 0 0 auto;
 }
 
 .slot-section {
   flex: 1 0 34%;
   background-color: #122838;
+  font-size: 1.3em;
+}
+
+.slot-bounds {
   display: flex;
   flex-flow: row wrap;
   align-items: flex-start;
   align-content: flex-start;
   justify-content: center;
   padding: 20px;
-  font-size: 1.3em;
 }
 
-.slot-section.hidden {
+.slot-section.hidden,
+.slot-section .minimal-slot-info,
+.slot-bounds.too-many-slots .hide-on-tms {
   display: none;
+}
+
+.slot-bounds.too-many-slots .minimal-slot-info {
+  display: block;
+}
+
+.slot-bounds.too-many-slots {
+  font-size: 0.8em;
 }
 
 .slot {

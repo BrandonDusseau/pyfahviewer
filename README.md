@@ -14,15 +14,14 @@ This application serves as a wall display for viewing your Folding@Home team ran
 
 ## Getting Started
 
-**NOTE:** You should not use this application if your Folding@Home control port is exposed to the Internet. This project does not support password authentication at this time.
-
 1. Copy `config.example.json` to `config.json` and input your configuration parameters. See the _Configuration_ section for details.
 
-2. Set up your Folding@Home clients to allow access from any IP.
+2. From the Folding@Home client, go to Configure > Remote Access.
 
-   1. From the Folding@Home client, go to Configure > Remote Access.
-
-   2. Under **Passwordless IP Address Restriction** set value `0.0.0.0/0` and **Save**.
+   1. Configure a password if desired.
+   2. Under **IP Address Restriction** follow the instructions to configure a subnet that will allow the server running this application to reach the client.
+   3. If you chose not to use a password, also configure this subnet under **Passwordless IP Address Restriction**.
+   4. You may need to close the advanced control and restart Folding@Home for the changes to take effect.
 
 3. Install dependencies and set up the virtual environment:
     ```bash
@@ -47,15 +46,21 @@ The application uses a JSON-based configuration file, like so:
 
 ```json
 {
-  "team": "99999",
+  "team": "1",
   "servers": [
-    "192.168.1.1"
+    {"address": "192.168.1.10", "password": "abcd1234"},
+    {"address": "192.168.1.11"}
   ]
 }
+
 ```
 
 The parameters are as follows:
 
  * `team`: Your team id, used to display the leaderboard. You can find this in your Folding@Home client. If this option is omitted, the leaderboard will not display.
 
- * `servers`: This is a list of IP addresses of servers running the Folding@Home client. If this option is omitted or the list is empty, the slots view will not display.
+ * `servers`: This is a list of servers running the Folding@Home client, formatted as a dictionary with the following options:
+
+   * `address`: The IP address or hostname of the server. Note that using hostname may slow down fetches.
+
+   * `password`: The password configured on the server. Omit this option if the server does not use a password. Authentication is also skipped if the password is null or the empty string.

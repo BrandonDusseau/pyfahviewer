@@ -14,16 +14,35 @@ class LocalClient(object):
     slot_stats_expire = {}
 
     def get_slots_and_queues(self, server, port="36330"):
-        if self.slot_stats_cache.get(server) is not None and round(time.time()) < self.slot_stats_expire.get(server):
-            return json.loads(self.slot_stats_cache.get(server))
+        # Backwards-compatibility: existing configs may simply have a string address.
+        if type(server) is str:
+            addr = server
+            password = None
+        elif type(server) is dict:
+            addr = server.get("address")
+            password = server.get("password")
+            if password == "":
+                password = None
+        else:
+            raise FahClientException("Invalid server configuration. Server list entry must be a string or dictionary.")
 
-        print("Contacting " + server)
+        if self.slot_stats_cache.get(addr) is not None and round(time.time()) < self.slot_stats_expire.get(addr):
+            return json.loads(self.slot_stats_cache.get(addr))
+
+        print("Contacting " + addr)
 
         slot_pyon = None
+        tn = None
         try:
-            tn = Telnet(server, port, 5)
+            tn = Telnet(addr, port, 5)
 
             self.__wait_for_prompt(tn)
+
+            if password:
+                tn.write("auth {0}\n".format(password).encode())
+                self.__wait_for_auth(tn);
+                self.__wait_for_prompt(tn)
+
             tn.write("slot-info\n".encode())
             slot_data = self.__get_data(tn, "\nPyON 1 slots\n")
 
@@ -33,22 +52,35 @@ class LocalClient(object):
 
             tn.close()
         except (timeout, EOFError, FahClientException, OSError) as e:
-            print("Error getting data from {0}: {1}".format(server, str(e)))
+            print("Error getting data from {0}: {1}".format(addr, str(e)))
+
+            if tn is not None:
+                tn.close()
+
             return None
 
         slots = eval(slot_data, {}, {})
         queues = eval(queue_data, {}, {})
 
-        if slots is None:
+        slots = self.__enhance_slots(slots, queues, addr)
+
+        self.slot_stats_cache[addr] = json.dumps(slots)
+        self.slot_stats_expire[addr] = round(time.time()) + 5
+
+        print("Finished slots for " + addr)
+        return slots
+
+    def __enhance_slots(self, slot_data, queue_data, server_addr):
+        if slot_data is None:
             return None
 
-        for s in slots:
+        for s in slot_data:
             selected_queue = None
-            s["server"] = server
-            s["hash"] = hashlib.md5("{0}:{1}".format(server, s["id"]).encode()).hexdigest()
+            s["server"] = server_addr
+            s["hash"] = hashlib.md5("{0}:{1}".format(server_addr, s["id"]).encode()).hexdigest()
 
-            if queues is not None:
-                for q in queues:
+            if queue_data is not None:
+                for q in queue_data:
                     if q is None or q["slot"] != s["id"]:
                         continue
 
@@ -68,11 +100,7 @@ class LocalClient(object):
                 s["cores"] = None
                 s["name"] = slot_info[2]
 
-        self.slot_stats_cache[server] = json.dumps(slots)
-        self.slot_stats_expire[server] = round(time.time()) + 5
-
-        print("Finished slots for " + server)
-        return slots
+        return slot_data
 
     def __compare_queue_status(self, stat1, stat2):
         priority = {
@@ -94,12 +122,24 @@ class LocalClient(object):
         if prompt_wait[-len(prompt):].decode() != prompt:
             raise FahClientException("Could not read prompt from telnet connection.")
 
-    def __get_data(self, tn, expected_header):
-        response_wait = tn.read_until(expected_header.encode(), 2)
+    def __wait_for_auth(self, tn):
+        auth_expectation = ["OK\n".encode(), "\nPyON 1 error\n".encode()]
+        auth_result = tn.expect(auth_expectation, 3)
 
-        if response_wait[:len(expected_header)].decode() != expected_header:
+        if auth_result[0] == -1 or auth_result[0] == 1:
+            raise FahClientException("Unable to authenticate with server. Check that the password is correct.")
+
+    def __get_data(self, tn, expected_header):
+        expect_list = [expected_header.encode(), "unknown command".encode()]
+        response = tn.expect(expect_list, 2)
+
+        if response[0] == -1:
             raise FahClientException(
                 "Unable to locate expected data header, got: {0}".format(response_wait.decode()))
+        elif response[0] == 1:
+            raise FahClientException(
+                "Unknown command error received. The server may be protected by a password or may be an "
+                + "unsupported version.")
 
         footer = "\n---\n"
         data_bytes = tn.read_until(footer.encode(), 2)

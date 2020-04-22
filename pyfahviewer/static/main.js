@@ -39,10 +39,14 @@
 
     fetching = true;
 
-    await Promise.all([
-      refreshTeam(),
-      refreshSlots()
-    ]);
+    try {
+      await Promise.all([
+        refreshTeam(),
+        refreshSlots()
+      ]);
+    } catch (e) {
+      console.error("Unhandled exception: " + e);
+    }
 
     fetching = false;
   }

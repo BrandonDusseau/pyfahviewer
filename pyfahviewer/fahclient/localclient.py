@@ -40,7 +40,7 @@ class LocalClient(object):
 
             if password:
                 tn.write("auth {0}\n".format(password).encode())
-                self.__wait_for_auth(tn);
+                self.__wait_for_auth(tn)
                 self.__wait_for_prompt(tn)
 
             tn.write("slot-info\n".encode())

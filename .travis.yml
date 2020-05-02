@@ -1,21 +1,30 @@
-language: python
-python:
-  - '3.5'
-  - '3.6'
-  - '3.7'
-  - '3.8'
+os: linux
 
-env:
-  - SKIP_INTERPRETER=true
+jobs:
+  include:
+    - language: python
+      name: "Lint Python"
+      python:
+        - '3.5'
+        - '3.6'
+        - '3.7'
+        - '3.8'
+      env:
+        - SKIP_INTERPRETER=true
+      before_install:
+        - git clone https://github.com/TravisToolbox/pycodestyle-travis.git
+      install:
+        - "pip install -r requirements.txt"
+        - "./pycodestyle-travis/install.sh"
+      script:
+        - "./pycodestyle-travis/scan.sh"
 
-before_install:
-      - git clone https://github.com/TravisToolbox/pycodestyle-travis.git
-install:
-  - "pip install -r requirements.txt"
-  - "./pycodestyle-travis/install.sh"
-
-script:
-  - "./pycodestyle-travis/scan.sh"
+    - language: node_js
+      name: "Lint JavaScript"
+      node_js: 13
+      install:
+        - npm install -g eslint
+      script: eslint pyfahviewer/static/*.js
 
 deploy:
   provider: releases

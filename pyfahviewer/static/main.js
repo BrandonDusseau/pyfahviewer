@@ -26,7 +26,25 @@
   function onResize() {
     // Don't resize slots while fetching
     if (!fetching) {
-      resizeSlotsIfNeeded(document.querySelector(slotContainerQuery))
+      let containerParent = document.getElementById("slots");
+      let slotsContainer = document.querySelector(slotContainerQuery);
+
+      // Do not attempt to resize slots if there is no slots view present.
+      if (slotsContainer == null || containerParent == null) {
+        return;
+      }
+
+      // To avoid screen flicker, we create a hidden clone of the slots display and force it to expanded view.
+      // But we actually perform the resize on the real view. This way we don't do math on already minimized slots.
+      let slotsClone = slotsContainer.cloneNode(true);
+      slotsClone.style.visibility = "hidden";
+      slotsClone.classList.remove("too-many-slots");
+      containerParent.appendChild(slotsClone);
+
+      let slotsWillExceedView = doSlotsExceedViewableArea(slotsClone);
+      resizeSlots(slotsContainer, slotsWillExceedView);
+
+      slotsClone.remove()
     }
   }
 
@@ -147,7 +165,8 @@
     slotsElement.appendChild(slotsContainer);
 
     // If there are too many slots, show a minimal view.
-    resizeSlotsIfNeeded(slotsContainer);
+    let slotsExceedBounds = doSlotsExceedViewableArea(slotsContainer);
+    resizeSlots(slotsContainer, slotsExceedBounds);
 
     // If there is already a slots display, remove it.
     let containers = document.querySelectorAll(slotContainerQuery);
@@ -182,7 +201,7 @@
     else if (state === "ready" || state === "uploading" || state === "downloading") {
       slotNode.querySelector(".progress-inner").classList.add("waiting");
       percentDone = 100;
-      percentCompleteText = "Waiting...";
+      percentCompleteText = "Retry in " + slotData.queue.nextattempt;
       pointsDisplay = "&mdash;";
     }
 
@@ -209,22 +228,27 @@
     return slotNode;
   }
 
-  // Switches slots to a minimal view if they would exceed the viewable bounds of the slot
-  // section. If slots no longer exceed bounds, switches back.
-  function resizeSlotsIfNeeded(slotsInnerContainer) {
-
-    // If passed a non-existent container (window resized while still loading), do nothing.
+  // Determines whether slots view would exceed the viewable bounds of the slot section.
+  function doSlotsExceedViewableArea(slotsInnerContainer) {
     if (slotsInnerContainer === null) {
-      return;
+      return false;
     }
 
     let slotSection = document.getElementById("slots");
     let containerHeight = slotSection.clientHeight;
     let slotsHeight = slotsInnerContainer.offsetHeight;
 
-    let slotsExceedContainerBounds = slotsHeight > containerHeight;
+    return slotsHeight > containerHeight;
+  }
 
-    if (slotsExceedContainerBounds) {
+  // Switches slots to a minimal or expanded view, depending on the requireSmall parameter.
+  function resizeSlots(slotsInnerContainer, requireSmall=false) {
+    // If passed a non-existent container (window resized while still loading), do nothing.
+    if (slotsInnerContainer === null) {
+      return;
+    }
+
+    if (requireSmall) {
       slotsInnerContainer.classList.add("too-many-slots");
     } else {
       slotsInnerContainer.classList.remove("too-many-slots");

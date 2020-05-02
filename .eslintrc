@@ -1,6 +1,6 @@
 {
   "parserOptions": {
-    "ecmaVersion": 6
+    "ecmaVersion": 8
   },
   "extends": "eslint:recommended",
   "rules": {
@@ -24,7 +24,7 @@
 
     "array-bracket-spacing": ["warn", "never"],
     "block-spacing": ["warn", "always"],
-    "brace-style": ["warn", "allman"],
+    "brace-style": ["warn", "1tbs"],
     "camelcase": ["warn", {"properties": "always"}],
     "comma-spacing": [
       "warn",
@@ -34,7 +34,7 @@
       }
     ],
     "comma-style": ["warn", "last"],
-    "indent": ["warn", "tab", {"SwitchCase": 1}],
+    "indent": ["warn", 2, {"SwitchCase": 1}],
     "new-cap": [
       "warn",
       {
@@ -75,6 +75,6 @@
   },
   "env": {
     "browser": true,
-    "jquery": true
+    "es6": true
   }
 }

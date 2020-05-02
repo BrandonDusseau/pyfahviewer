@@ -22,7 +22,10 @@
     window.setInterval(loadData, 10000);
   });
 
-  // Window resize event handler.
+  /**
+   * Window resize event handler.
+   * @return {undefined}
+   */
   function onResize() {
     // Don't resize slots while fetching
     if (!fetching) {
@@ -44,11 +47,14 @@
       let slotsWillExceedView = doSlotsExceedViewableArea(slotsClone);
       resizeSlots(slotsContainer, slotsWillExceedView);
 
-      slotsClone.remove()
+      slotsClone.remove();
     }
   }
 
-  // Fetches data from the API.
+  /**
+   * Fetches data from the API.
+   * @return {undefined}
+   */
   async function loadData() {
     if (fetching) {
       console.log("Did not fetch because a fetch is already in progress.");
@@ -69,7 +75,10 @@
     fetching = false;
   }
 
-  // Loads and renders the leaderboard data.
+  /**
+   * Loads and renders the leaderboard data.
+   * @returns {undefined}
+   */
   async function refreshTeam() {
     let response = null;
     try {
@@ -86,7 +95,10 @@
     renderTeamStats(teamData);
   }
 
-  // Loads and renders the slot data.
+  /**
+   * Loads and renders the slot data.
+   * @returns {undefined}
+   */
   async function refreshSlots() {
     let response = null;
     try {
@@ -103,7 +115,11 @@
     renderSlotStats(slotData);
   }
 
-  // Renders loaded leaderboard data.
+  /**
+   * Renders loaded leaderboard data.
+   * @param {Object} teamData Response from team data API.
+   * @returns {undefined}
+   */
   function renderTeamStats(teamData) {
     if (teamData === null) {
       return;
@@ -122,7 +138,7 @@
     document.getElementById("team-rank").innerHTML = "Rank: " + Number(teamData.rank).toLocaleString();
     document.getElementById("leader-header").classList.remove("hidden");
 
-    for (i = 0; i < 15; i++) {
+    for (let i = 0; i < 15; i++) {
       let donor = teamData.donors[i];
       table.querySelector("tbody").appendChild(createElementFromHtml(
         "<tr><td class=\"overflow-el\">" +
@@ -137,7 +153,11 @@
     leaderContainer.appendChild(table);
   }
 
-  // Renders loaded slot data.
+  /**
+   * Renders loaded slot data.
+   * @param {Object} slotData Response from slot data API.
+   * @returns {undefined}
+   */
   function renderSlotStats(slotData) {
     if (slotData === null) {
       return;
@@ -178,7 +198,11 @@
     slotsContainer.style.visibility = "visible";
   }
 
-  // Creates a new view for a particular slot.
+  /**
+   * Creates a new view for a particular slot.
+   * @param {Object} slotData Response from the slot data API.
+   * @returns {Object} An HTML element representing a single slot.
+   */
   function generateIndividualSlot(slotData) {
     let slotNode = slotTemplate.cloneNode(true);
 
@@ -197,8 +221,7 @@
     let state = slotData.status.toLowerCase();
     if (state === "paused" || state === "stopping") {
       slotNode.querySelector(".progress-inner").classList.add("paused");
-    }
-    else if (state === "ready" || state === "uploading" || state === "downloading") {
+    } else if (state === "ready" || state === "uploading" || state === "downloading") {
       slotNode.querySelector(".progress-inner").classList.add("waiting");
       percentDone = 100;
       percentCompleteText = "Retry in " + slotData.queue.nextattempt;
@@ -228,7 +251,11 @@
     return slotNode;
   }
 
-  // Determines whether slots view would exceed the viewable bounds of the slot section.
+  /**
+   * Determines whether slots view would exceed the viewable bounds of the slot section.
+   * @param {Object} slotsInnerContainer The HTML element directly containing all of the individual slots.
+   * @returns {bool} True if the slots would exceed the viewable area if rendered.
+   */
   function doSlotsExceedViewableArea(slotsInnerContainer) {
     if (slotsInnerContainer === null) {
       return false;
@@ -241,8 +268,13 @@
     return slotsHeight > containerHeight;
   }
 
-  // Switches slots to a minimal or expanded view, depending on the requireSmall parameter.
-  function resizeSlots(slotsInnerContainer, requireSmall=false) {
+  /**
+   * Switches slots to a minimal or expanded view, depending on the requireSmall parameter.
+   * @param {Object} slotsInnerContainer The HTML element directly containing all of the individual slots.
+   * @param {bool} requireSmall Whether the minimized view should be applied or not.
+   * @returns {undefined}
+   */
+  function resizeSlots(slotsInnerContainer, requireSmall = false) {
     // If passed a non-existent container (window resized while still loading), do nothing.
     if (slotsInnerContainer === null) {
       return;
@@ -255,21 +287,27 @@
     }
   }
 
-  /*
+  /**
    * Formats the title of the slot.
    * CPU slots: "CPU (# of cores)"
    * GPU slots: GPU model name
+   * @param {Object} slot The slot for which to format the name.
+   * @returns {string} The formatted slot title.
    */
   function formatSlotName(slot) {
     if (slot.type === "cpu") {
       return slot.name + " (" + slot.cores + ")";
     }
 
-    let re = /^[^\[]*\[(.*)\]/;
+    let re = /^[^[]*\[(.*)\]/;
     return slot.name.match(re)[1];
   }
 
-  // Generates an Element from an HTML string. Returns the first element in the string.
+  /**
+   * Generates an Element from an HTML string. Returns the first element in the string.
+   * @param {string} html The HTML to generate an element from.
+   * @returns {Object} The created HTML element.
+   */
   function createElementFromHtml(html) {
     let template = document.createElement('template');
     html = html.trim();

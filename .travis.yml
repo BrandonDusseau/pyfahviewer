@@ -1,25 +1,36 @@
-language: python
-python:
-  - '3.5'
-  - '3.6'
-  - '3.7'
-  - '3.8'
+os: linux
 
-env:
-  - SKIP_INTERPRETER=true
+jobs:
+  include:
+    - language: python
+      name: "Lint Python"
+      python:
+        - '3.5'
+        - '3.6'
+        - '3.7'
+        - '3.8'
+      env:
+        - SKIP_INTERPRETER=true
+      before_install:
+        - git clone https://github.com/TravisToolbox/pycodestyle-travis.git
+      install:
+        - "pip install -r requirements.txt"
+        - "./pycodestyle-travis/install.sh"
+      script:
+        - "./pycodestyle-travis/scan.sh"
 
-before_install:
-      - git clone https://github.com/TravisToolbox/pycodestyle-travis.git
-install:
-  - "pip install -r requirements.txt"
-  - "./pycodestyle-travis/install.sh"
+    - language: node_js
+      name: "Lint JavaScript"
+      node_js: 13
+      install:
+        - npm install -g eslint
+      script: eslint pyfahviewer/static/*.js
 
-script:
-  - "./pycodestyle-travis/scan.sh"
-
-deploy:
-  provider: releases
-  api_key:
-    secure: KnwDncons7xVHkNv+O/PkKvaHxxM0YCnQBaLFARqrNfP4Zg304YOQM+PjZwNKBdPJU1qWUcdlTaTFTGTuHJPuPqALLRjPt9mhXCq5azVqwqeCz20kHBmPWnKsO3zPp60BX7bWjAuEyyfmy/yAci/MIBaILGhpozqr9m431jAf6AKFBMH010E96AV3YNAuFoTUcEvCWF764iDebAh+ql0xhIhpAk3vYZSiHZ92EkRedujUpdtwOmdqfezyGUs8sAcWqeXmeW3U65RuoWpnVbLDZONJhqRMQd+VlNwpehQYzsT37ikCidiMRA8p4Du9mwzaQ21tTUkyjd8MedbjUqm1p8sDPuKEgAgsmgbLKT9B4EID7ckfkouEKsxYsi9HavLaGAfBMKIHbpNxxopxl9bK+kDHLMNLWP/ne/JWwuiIqoz6rhKTQewXFMjp+Nc9onW0b7EgnwScqjEDFfIcjmbtQjEatR0FftqMaA49t04QC18/M11H8h1q+wF9332OFogEXZM7dld8Tbf/3L6sTow7YIetKO/prTHggL+E4QtoYsl3YuZ2lOiGbueczhe5BGQoIw+t7NJOLsDVA57tIkqrCYzWTcI5Xz2KLZdG9u7eR9Wl/upY7pudFhoyWFPC39MwoZDhDWnHGv5L1iUllh7g6iKUbtS5KfFTMaS+ueO8uM=
-  on:
-    tags: true
+    - name: "Deploy"
+      if: tag IS present
+      deploy:
+        provider: releases
+        api_key:
+          secure: KnwDncons7xVHkNv+O/PkKvaHxxM0YCnQBaLFARqrNfP4Zg304YOQM+PjZwNKBdPJU1qWUcdlTaTFTGTuHJPuPqALLRjPt9mhXCq5azVqwqeCz20kHBmPWnKsO3zPp60BX7bWjAuEyyfmy/yAci/MIBaILGhpozqr9m431jAf6AKFBMH010E96AV3YNAuFoTUcEvCWF764iDebAh+ql0xhIhpAk3vYZSiHZ92EkRedujUpdtwOmdqfezyGUs8sAcWqeXmeW3U65RuoWpnVbLDZONJhqRMQd+VlNwpehQYzsT37ikCidiMRA8p4Du9mwzaQ21tTUkyjd8MedbjUqm1p8sDPuKEgAgsmgbLKT9B4EID7ckfkouEKsxYsi9HavLaGAfBMKIHbpNxxopxl9bK+kDHLMNLWP/ne/JWwuiIqoz6rhKTQewXFMjp+Nc9onW0b7EgnwScqjEDFfIcjmbtQjEatR0FftqMaA49t04QC18/M11H8h1q+wF9332OFogEXZM7dld8Tbf/3L6sTow7YIetKO/prTHggL+E4QtoYsl3YuZ2lOiGbueczhe5BGQoIw+t7NJOLsDVA57tIkqrCYzWTcI5Xz2KLZdG9u7eR9Wl/upY7pudFhoyWFPC39MwoZDhDWnHGv5L1iUllh7g6iKUbtS5KfFTMaS+ueO8uM=
+        on:
+          tags: true

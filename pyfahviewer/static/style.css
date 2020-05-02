@@ -135,6 +135,10 @@ th, td {
   margin: 7px;
 }
 
+.slot-bounds.too-many-slots .slot {
+  flex-basis: 200px;
+}
+
 .slot .text-content {
   margin: 10px;
 }
@@ -149,6 +153,7 @@ th, td {
 .slot .progress-bar .slot-progress {
   display: inline-block;
   padding: 3px 10px;
+  white-space: nowrap;
 }
 
 .slot .progress-bar .progress-inner {

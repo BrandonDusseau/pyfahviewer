@@ -22,7 +22,7 @@ def get_team():
         print("Returning no team data because a team number is not configured.")
         return {"disabled": True}
 
-    return stats_client.get_team_stats(team)
+    return jsonify(stats_client.get_team_stats(team))
 
 
 @app.route('/api/slots')
@@ -35,7 +35,7 @@ def get_slots():
 
     if servers is None or len(servers) == 0:
         print("Returning no slot data because no servers are configured.")
-        return {"disabled": True}
+        return jsonify({"disabled": True})
 
     with ThreadPoolExecutor(max_workers=3) as executor:
         slot_results = executor.map(local_client.get_slots_and_queues, servers)
@@ -45,7 +45,7 @@ def get_slots():
         if slot_result is not None:
             slots = slots + slot_result
 
-    return {"slots": slots}
+    return jsonify({"slots": slots})
 
 
 if __name__ == '__main__':

@@ -81,7 +81,10 @@ docker-compose down
 
 1. Install dependencies and set up the virtual environment:
    ```bash
+   # First run
    virtualenv venv
+
+   # Every run
    source venv/bin/activate
    pip install -r requirements.txt
    ```

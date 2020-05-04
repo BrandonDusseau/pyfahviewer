@@ -6,11 +6,12 @@ This application serves as a wall display for viewing your Folding@Home team ran
 
 ![Demo screenshot](demoscreenshot.png)
 
+
 ## Requirements
 
- * Python 3.5+
- * `virtualenv` (`pip install virtualenv`)
+ * Docker, OR Python 3.5+ with `virtualenv` (`pip install virtualenv`)
  * FAHClient version 7.4+
+
 
 ## Getting Started
 
@@ -23,22 +24,8 @@ This application serves as a wall display for viewing your Folding@Home team ran
    3. If you chose not to use a password, also configure this subnet under **Passwordless IP Address Restriction**.
    4. You may need to close the advanced control and restart Folding@Home for the changes to take effect.
 
-3. Install dependencies and set up the virtual environment:
-    ```bash
-    virtualenv venv
-    source venv/bin/activate
-    pip install -r requirements.txt
-    ```
+3. Follow the instructions under _Running the Application_.
 
-4. Start the application while inside the virtualenv:
-    ```bash
-    // On some systems it may be necessary to change 'python' to 'python3' for Python 3.x.
-    python pyfahviewer/main.py
-    ```
-
-5. Navigate to `http://localhost:5000` in your browser.
-
-6. When you're finished, you can press Ctrl+C in the terminal to stop the server, then run `deactivate` to return to your normal shell.
 
 ## Configuration
 
@@ -64,3 +51,57 @@ The parameters are as follows:
    * `address`: The IP address or hostname of the server. Note that using hostname may slow down fetches.
 
    * `password`: The password configured on the server. Omit this option if the server does not use a password. Authentication is also skipped if the password is null or the empty string.
+
+
+## Running the Application
+
+### Running in Docker (recommended)
+
+From the project directory, run:
+
+```bash
+# If you want application output, you may wish to remove the -d flag.
+docker-compose up -d
+```
+
+Docker will build the container with the appropriate dependencies and launch gunicorn to host the application. By
+detault, the app runs on port 5000 and listens on all interfaces (`0.0.0.0`). You can change this on the `CMD` line of
+`Dockerfile`.
+
+If you desire to host the dashboard publicly, you may choose to use `nginx.sample.conf` (or your own configuration)
+to put an nginx proxy in front of the app.
+
+When you want to terminate the application, run the following from the project directory:
+
+```bash
+docker-compose down
+```
+
+### Running Without a Container
+
+1. Install dependencies and set up the virtual environment:
+   ```bash
+   # First run
+   virtualenv venv
+
+   # Every run
+   source venv/bin/activate
+   pip install -r requirements.txt
+   ```
+
+2. Start the application while inside the virtualenv:
+   ```bash
+   gunicorn -b 0.0.0.0:5000 -w 1 wsgi:app
+   ```
+
+3. Navigate to `http://<server ip>:5000` in your browser.
+
+4. When you're finished, you can press Ctrl+C in the terminal to stop the server, then run `deactivate` to return to your normal shell.
+
+
+## Contributing
+Contributions are welcome! If you see a problem or would like a feature, create an issue or open a pull request on this repository.
+
+
+## License
+This application is distributed with the MIT license. See the LICENSE file for more information.

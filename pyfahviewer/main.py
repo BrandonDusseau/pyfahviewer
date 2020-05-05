@@ -12,6 +12,7 @@ local_client = LocalClient()
 # Dictionary to cache mock files if used, so that we don't do a ton of I/O.
 mocks_cache = {}
 
+
 @app.route('/')
 def index():
     return render_template('index.html')

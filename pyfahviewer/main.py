@@ -58,6 +58,7 @@ def get_slots():
     return jsonify({'slots': slots})
 
 
+# Returns mock data from a file in the mocks/ directory.
 def __get_mock(filename):
     global mocks_cache
     if mocks_cache.get(filename):

@@ -9,6 +9,7 @@ class StatsClient(object):
     team_stats_cache = None
     team_stats_expire = 0
 
+    # Fetches team statistics from the F@H server.
     def get_team_stats(self, team_num):
         if self.team_stats_cache is not None and round(time.time()) < self.team_stats_expire:
             return json.loads(self.team_stats_cache)

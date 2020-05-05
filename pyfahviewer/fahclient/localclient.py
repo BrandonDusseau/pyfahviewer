@@ -13,6 +13,7 @@ class LocalClient(object):
     slot_stats_cache = {}
     slot_stats_expire = {}
 
+    # Gets slot and related queue information from a Folding@Home client.
     def get_slots_and_queues(self, server, port="36330"):
         # Backwards-compatibility: existing configs may simply have a string address.
         if type(server) is str:
@@ -26,10 +27,11 @@ class LocalClient(object):
         else:
             raise FahClientException("Invalid server configuration. Server list entry must be a string or dictionary.")
 
+        # Return data from cache if possible.
         if self.slot_stats_cache.get(addr) is not None and round(time.time()) < self.slot_stats_expire.get(addr):
             return json.loads(self.slot_stats_cache.get(addr))
 
-        print("Contacting " + addr)
+        print("Contacting server '{0}'...".format(addr))
 
         slot_pyon = None
         tn = None
@@ -67,9 +69,10 @@ class LocalClient(object):
         self.slot_stats_cache[addr] = json.dumps(slots)
         self.slot_stats_expire[addr] = round(time.time()) + 5
 
-        print("Finished slots for " + addr)
+        print("Finished slots for '{0}'".format(addr))
         return slots
 
+    # Manipulates the slot data to add clean values and inject the queue data.
     def __enhance_slots(self, slot_data, queue_data, server_addr):
         if slot_data is None:
             return None
@@ -102,8 +105,10 @@ class LocalClient(object):
 
         return slot_data
 
+    # Compares two queue entries. Returns a positive integer if stat1 has a status with a higher precedence than stat2.
+    # Returns a negative number (stat2 > stat1) or zero (equal) otherwise.
     def __compare_queue_status(self, stat1, stat2):
-        priority = {
+        precedence = {
             "UPLOADING": 0,
             "DOWNLOADING": 1,
             "READY": 2,
@@ -113,8 +118,9 @@ class LocalClient(object):
             "RUNNING": 6
         }
 
-        return priority.get(stat1, -1) - priority.get(stat2, -1)
+        return precedence.get(stat1, -1) - precedence.get(stat2, -1)
 
+    # Reads the telnet stream until a F@H command prompt appears.
     def __wait_for_prompt(self, tn):
         prompt = "> "
         prompt_wait = tn.read_until(prompt.encode(), 2)
@@ -122,6 +128,7 @@ class LocalClient(object):
         if prompt_wait[-len(prompt):].decode() != prompt:
             raise FahClientException("Could not read prompt from telnet connection.")
 
+    # Reads the telnet stream until a F@H auth response appears.
     def __wait_for_auth(self, tn):
         auth_expectation = ["OK\n".encode(), "\nPyON 1 error\n".encode()]
         auth_result = tn.expect(auth_expectation, 3)
@@ -129,14 +136,18 @@ class LocalClient(object):
         if auth_result[0] == -1 or auth_result[0] == 1:
             raise FahClientException("Unable to authenticate with server. Check that the password is correct.")
 
+    # Reads data from the telnet stream after a command is sent.
     def __get_data(self, tn, expected_header):
         expect_list = [expected_header.encode(), "unknown command".encode()]
         response = tn.expect(expect_list, 2)
 
         if response[0] == -1:
+            # No match to our patterns.
             raise FahClientException(
                 "Unable to locate expected data header, got: {0}".format(response_wait.decode()))
         elif response[0] == 1:
+            # If a F@H server has password enabled and we have not authenticated, the server will return
+            # "unknown command".
             raise FahClientException(
                 "Unknown command error received. The server may be protected by a password or may be an "
                 + "unsupported version.")

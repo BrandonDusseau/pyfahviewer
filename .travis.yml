@@ -4,6 +4,7 @@ os: linux
 jobs:
   include:
     - language: python
+      stage: build
       name: "Lint Python"
       python:
         - '3.5'
@@ -21,6 +22,7 @@ jobs:
         - "./pycodestyle-travis/scan.sh"
 
     - language: node_js
+      stage: build
       name: "Lint JavaScript"
       node_js: 13
       install:
@@ -28,6 +30,7 @@ jobs:
       script: eslint pyfahviewer/static/*.js
 
     - name: "Draft GitHub Release"
+      stage: deploy
       if: tag IS present
       deploy:
         provider: releases

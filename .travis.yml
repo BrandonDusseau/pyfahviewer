@@ -1,3 +1,4 @@
+language: python
 os: linux
 
 jobs:
@@ -26,11 +27,14 @@ jobs:
         - npm install -g eslint
       script: eslint pyfahviewer/static/*.js
 
-    - name: "Deploy"
+    - name: "Draft GitHub Release"
       if: tag IS present
       deploy:
         provider: releases
         api_key:
           secure: KnwDncons7xVHkNv+O/PkKvaHxxM0YCnQBaLFARqrNfP4Zg304YOQM+PjZwNKBdPJU1qWUcdlTaTFTGTuHJPuPqALLRjPt9mhXCq5azVqwqeCz20kHBmPWnKsO3zPp60BX7bWjAuEyyfmy/yAci/MIBaILGhpozqr9m431jAf6AKFBMH010E96AV3YNAuFoTUcEvCWF764iDebAh+ql0xhIhpAk3vYZSiHZ92EkRedujUpdtwOmdqfezyGUs8sAcWqeXmeW3U65RuoWpnVbLDZONJhqRMQd+VlNwpehQYzsT37ikCidiMRA8p4Du9mwzaQ21tTUkyjd8MedbjUqm1p8sDPuKEgAgsmgbLKT9B4EID7ckfkouEKsxYsi9HavLaGAfBMKIHbpNxxopxl9bK+kDHLMNLWP/ne/JWwuiIqoz6rhKTQewXFMjp+Nc9onW0b7EgnwScqjEDFfIcjmbtQjEatR0FftqMaA49t04QC18/M11H8h1q+wF9332OFogEXZM7dld8Tbf/3L6sTow7YIetKO/prTHggL+E4QtoYsl3YuZ2lOiGbueczhe5BGQoIw+t7NJOLsDVA57tIkqrCYzWTcI5Xz2KLZdG9u7eR9Wl/upY7pudFhoyWFPC39MwoZDhDWnHGv5L1iUllh7g6iKUbtS5KfFTMaS+ueO8uM=
+        name: "$TRAVIS_TAG"
+        draft: true
+        overwrite: true
         on:
           tags: true

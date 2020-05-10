@@ -299,8 +299,10 @@
       return slot.name + " (" + slot.cores + ")";
     }
 
-    let re = /^[^[]*\[(.*)\]/;
-    return slot.name.match(re)[1];
+    let re = /^(?:[^[]*\[)?([^\]]+)\]?/;
+    let match = slot.name.match(re);
+
+    return (match !== null) ? match[1] : slot.name;
   }
 
   /**

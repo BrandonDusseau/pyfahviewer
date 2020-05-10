@@ -234,7 +234,7 @@
       "hash": "",
       "id": "01",
       "idle": false,
-      "name": "Raven[Ryzen vega 8 mobile]",
+      "name": "Ryzen vega 8 mobile",
       "options": {
         "client-type": "advanced"
       },
@@ -372,7 +372,7 @@
       "hash": "",
       "id": "01",
       "idle": false,
-      "name": "Navi14 [Radeon RX 5500/5500M / Pro 5500M]",
+      "name": "Navi14",
       "options": {
         "client-type": "advanced",
         "next-unit-percentage": "90"

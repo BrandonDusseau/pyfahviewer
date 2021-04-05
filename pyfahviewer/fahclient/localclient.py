@@ -144,7 +144,7 @@ class LocalClient(object):
         if response[0] == -1:
             # No match to our patterns.
             raise FahClientException(
-                "Unable to locate expected data header, got: {0}".format(response_wait.decode()))
+                "Unable to locate expected data header, got: {0}".format(response[2].decode()))
         elif response[0] == 1:
             # If a F@H server has password enabled and we have not authenticated, the server will return
             # "unknown command".

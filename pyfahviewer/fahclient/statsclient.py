@@ -14,7 +14,7 @@ class StatsClient(object):
         if self.team_stats_cache is not None and round(time.time()) < self.team_stats_expire:
             return json.loads(self.team_stats_cache)
 
-        uri = "https://stats.foldingathome.org/api/team/{0}".format(team_num)
+        uri = "https://statsclassic.foldingathome.org/api/team/{0}".format(team_num)
         req = requests.get(uri)
 
         if req.status_code != 200:

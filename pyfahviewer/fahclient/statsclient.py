@@ -15,7 +15,12 @@ class StatsClient(object):
             return json.loads(self.team_stats_cache)
 
         uri = "https://statsclassic.foldingathome.org/api/team/{0}".format(team_num)
-        req = requests.get(uri)
+
+        # Include a referer header to circumvent the API server blocking the request.
+        headers = {
+            'Referer': 'https://statsclassic.foldingathome.org/team/{0}'.format(team_num)
+        }
+        req = requests.get(uri, headers=headers)
 
         if req.status_code != 200:
             return None

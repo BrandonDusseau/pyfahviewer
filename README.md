@@ -9,7 +9,7 @@ This application serves as a wall display for viewing your Folding@Home team ran
 
 ## Requirements
 
- * Docker, OR Python 3.5+ with `virtualenv` (`pip install virtualenv`)
+ * Docker, OR Python 3.6+ with `virtualenv` (`pip install virtualenv`)
  * FAHClient version 7.4+
 
 
@@ -91,10 +91,10 @@ docker-compose down
 
 2. Start the application while inside the virtualenv:
    ```bash
-   gunicorn -b 0.0.0.0:5000 -w 1 wsgi:app
+   gunicorn -b 0.0.0.0:5001 -w 1 wsgi:app
    ```
 
-3. Navigate to `http://<server ip>:5000` in your browser.
+3. Navigate to `http://<server ip>:5001` in your browser.
 
 4. When you're finished, you can press Ctrl+C in the terminal to stop the server, then run `deactivate` to return to your normal shell.
 

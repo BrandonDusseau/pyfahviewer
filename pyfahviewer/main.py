@@ -29,7 +29,10 @@ def get_team():
         print('Returning no team data because a team number is not configured.')
         return {'disabled': True}
 
-    return jsonify(stats_client.get_team_stats(team))
+    team_stats = stats_client.get_team_stats(team)
+    team_members = stats_client.get_team_members(team)
+
+    return jsonify({'team': team_stats, 'members': team_members['members']})
 
 
 @app.route('/api/slots')

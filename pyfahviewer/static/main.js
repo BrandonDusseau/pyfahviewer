@@ -134,16 +134,16 @@
 
     let table = leaderboardTemplate.cloneNode(true);
 
-    document.getElementById("team-name").innerHTML = teamData.name;
-    document.getElementById("team-rank").innerHTML = "Rank: " + Number(teamData.rank).toLocaleString();
+    document.getElementById("team-name").innerHTML = teamData.team.name;
+    document.getElementById("team-rank").innerHTML = "Rank: " + Number(teamData.team.rank).toLocaleString();
     document.getElementById("leader-header").classList.remove("hidden");
 
     for (let i = 0; i < 15; i++) {
-      let donor = teamData.donors[i];
+      let donor = teamData.members[i];
       table.querySelector("tbody").appendChild(createElementFromHtml(
         "<tr><td class=\"overflow-el\">" +
         donor.name + "</td><td>" +
-        Number(donor.credit).toLocaleString() + "</td><td>" +
+        Number(donor.score).toLocaleString() + "</td><td>" +
         Number(donor.wus).toLocaleString() + "</td></tr>"
       ));
     }

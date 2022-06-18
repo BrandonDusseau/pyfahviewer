@@ -1,7 +1,5 @@
 # PyFahViewer - A Folding@Home Wall Display
 
-[![Build Status](https://travis-ci.com/BrandonDusseau/pyfahviewer.svg?branch=master)](https://travis-ci.com/BrandonDusseau/pyfahviewer)
-
 This application serves as a wall display for viewing your Folding@Home team ranking and work unit progress.
 
 ![Demo screenshot](demoscreenshot.png)

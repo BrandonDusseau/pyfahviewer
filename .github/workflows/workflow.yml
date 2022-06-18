@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.5', '3.6', '3.7', '3.8']
+        python-version: ['3.6', '3.7', '3.8']
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -13,9 +13,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
       - run: pip install -r requirements.txt
-      - uses: ricardochaves/python-lint@v1.4.0
-        with:
-          use-pycodestyle: true
+      - run: pip install pycodestyle
+      - run: pycodestyle pyfahviewer
   lint-javascript:
     runs-on: ubuntu-latest
     steps:

@@ -64,7 +64,7 @@
     "require-jsdoc": [
       "error",
       {
-        require: {
+        "require": {
           "FunctionDeclaration": true,
           "MethodDefinition": true,
           "ClassDeclaration": false

@@ -24,7 +24,7 @@
 
   /**
    * Window resize event handler.
-   * @return {undefined}
+   * @returns {undefined}
    */
   function onResize() {
     // Don't resize slots while fetching
@@ -53,7 +53,7 @@
 
   /**
    * Fetches data from the API.
-   * @return {undefined}
+   * @returns {undefined}
    */
   async function loadData() {
     if (fetching) {

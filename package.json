@@ -1,0 +1,12 @@
+{
+  "name": "pyfahviewer",
+  "description": "This application serves as a wall display for viewing your Folding@Home team ranking and work unit progress.",
+  "author": "Brandon Dusseau",
+  "license": "MIT",
+  "devDependencies": {
+    "@eslint/js": "^9.1.1",
+    "eslint": "^9.1.0",
+    "eslint-plugin-jsdoc": "^48.2.3",
+    "globals": "^15.0.0"
+  }
+}

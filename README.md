@@ -7,7 +7,7 @@ This application serves as a wall display for viewing your Folding@Home team ran
 
 ## Requirements
 
- * Docker, OR Python 3.6+ with `virtualenv` (`pip install virtualenv`)
+ * Docker, OR Python 3.8+ with `virtualenv` (`pip install virtualenv`)
  * FAHClient version 7.4+
 
 

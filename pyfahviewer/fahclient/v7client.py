@@ -3,45 +3,34 @@ import json
 import re
 import time
 from .fahclientexception import FahClientException
-from datetime import datetime
 from math import floor
 from telnetlib import Telnet
 from socket import timeout
 
 
-class LocalClient(object):
+class V7Client(object):
     slot_stats_cache = {}
     slot_stats_expire = {}
 
     # Gets slot and related queue information from a Folding@Home client.
-    def get_slots_and_queues(self, server, port="36330"):
-        # Backwards-compatibility: existing configs may simply have a string address.
-        if type(server) is str:
-            addr = server
-            password = None
-        elif type(server) is dict:
-            addr = server.get("address")
-            password = server.get("password")
-            if password == "":
-                password = None
-        else:
-            raise FahClientException("Invalid server configuration. Server list entry must be a string or dictionary.")
+    def get_slots_and_queues(self, server):
+        server_addr = server["address"]
+        server_pass = server["password"]
 
         # Return data from cache if possible.
-        if self.slot_stats_cache.get(addr) is not None and round(time.time()) < self.slot_stats_expire.get(addr):
-            return json.loads(self.slot_stats_cache.get(addr))
+        if self.slot_stats_cache.get(server_addr) is not None and round(time.time()) < self.slot_stats_expire.get(server_addr):
+            return json.loads(self.slot_stats_cache.get(server_addr))
 
-        print("Contacting server '{0}'...".format(addr))
+        print("Contacting v7 server '{0}'...".format(server_addr))
 
-        slot_pyon = None
         tn = None
         try:
-            tn = Telnet(addr, port, 5)
+            tn = Telnet(server_addr, "36330", 5)
 
             self.__wait_for_prompt(tn)
 
-            if password:
-                tn.write("auth {0}\n".format(password).encode())
+            if server_pass:
+                tn.write("auth {0}\n".format(server_pass).encode())
                 self.__wait_for_auth(tn)
                 self.__wait_for_prompt(tn)
 
@@ -54,23 +43,67 @@ class LocalClient(object):
 
             tn.close()
         except (timeout, EOFError, FahClientException, OSError) as e:
-            print("Error getting data from {0}: {1}".format(addr, str(e)))
+            print("Error getting data from {0}: {1}".format(server_addr, str(e)))
 
             if tn is not None:
                 tn.close()
 
             return None
 
-        slots = eval(slot_data, {}, {})
+        client_slots = eval(slot_data, {}, {})
         queues = eval(queue_data, {}, {})
 
-        slots = self.__enhance_slots(slots, queues, addr)
+        client_slots = self.__enhance_slots(client_slots, queues, server_addr)
 
-        self.slot_stats_cache[addr] = json.dumps(slots)
-        self.slot_stats_expire[addr] = round(time.time()) + 5
+        slots = []
+        for slot in client_slots:
+            queue = slot.get("queue")
+            time_remaining = self.__get_time_remaining(queue)
 
-        print("Finished slots for '{0}'".format(addr))
+            slots.append({
+                "server": server_addr,
+                "type": slot.get("type"),
+                "hash": slot.get("hash"),
+                "cores": slot.get("cores"),
+                "name": slot.get("name"),
+                "percentdone": queue.get("percentdone", 0),
+                "creditestimate": int(queue.get("creditestimate")),
+                "status": slot.get("status", "unknown").lower(),
+                "eta": {
+                    "days": time_remaining[0],
+                    "hours": time_remaining[1],
+                    "minutes": time_remaining[2],
+                    "seconds": time_remaining[3],
+                }
+            })
+
+        self.slot_stats_cache[server_addr] = json.dumps(slots)
+        self.slot_stats_expire[server_addr] = round(time.time()) + 10
+
+        print("Finished slots for '{0}'".format(server_addr))
         return slots
+
+
+    def __get_time_remaining(self, queue):
+        match = re.match(r"(?:(\d+) days?\s?)?(?:(\d+) hours?\s?)?(?:(\d+) mins?\s?)?(?:(\d+) secs?)?", queue.get("eta", ""))
+
+        if match is None:
+            return (0, 0, 0, 0)
+
+        days_str = match.group(1)
+        days = 0 if days_str is None else int(days_str)
+
+        hours_str = match.group(2)
+        hours = 0 if hours_str is None else int(hours_str)
+
+        minutes_str = match.group(3)
+        minutes = 0 if minutes_str is None else int(minutes_str)
+
+        seconds_str = match.group(4)
+        seconds = 0 if seconds_str is None else int(seconds_str)
+
+        return (days, hours, minutes, seconds)
+
 
     # Manipulates the slot data to add clean values and inject the queue data.
     def __enhance_slots(self, slot_data, queue_data, server_addr):
@@ -89,21 +122,24 @@ class LocalClient(object):
 
                     if (selected_queue is None
                         or self.__compare_queue_status(q["state"], selected_queue["state"]) >= 0):
-                        q["percentdoneclean"] = floor(float(q["percentdone"].replace("%", "")))
+                        q["percentdone"] = round(float(q["percentdone"].replace("%", "")), 2)
+                        q["percentdoneclean"] = floor(float(q["percentdone"]))
                         selected_queue = q
 
-            s["queue"] = selected_queue
+            s["queue"] = selected_queue if selected_queue is not None else {}
 
             slot_info = s["description"].split(":")
             s["type"] = slot_info[0]
             if slot_info[0] == "cpu":
-                s["cores"] = slot_info[1]
+                s["cores"] = int(slot_info[1])
                 s["name"] = "CPU"
             elif slot_info[0] == "gpu":
+                match = re.match(r"^(?:[^[]*\[)?([^\]]+)\]?", slot_info[2])
                 s["cores"] = None
-                s["name"] = slot_info[2]
+                s["name"] = match.group(1) if match is not None else "Unknown GPU"
 
         return slot_data
+
 
     # Compares two queue entries. Returns a positive integer if stat1 has a status with a higher precedence than stat2.
     # Returns a negative number (stat2 > stat1) or zero (equal) otherwise.
@@ -120,6 +156,7 @@ class LocalClient(object):
 
         return precedence.get(stat1, -1) - precedence.get(stat2, -1)
 
+
     # Reads the telnet stream until a F@H command prompt appears.
     def __wait_for_prompt(self, tn):
         prompt = "> "
@@ -128,6 +165,7 @@ class LocalClient(object):
         if prompt_wait[-len(prompt):].decode() != prompt:
             raise FahClientException("Could not read prompt from telnet connection.")
 
+
     # Reads the telnet stream until a F@H auth response appears.
     def __wait_for_auth(self, tn):
         auth_expectation = ["OK\n".encode(), "\nPyON 1 error\n".encode()]
@@ -135,6 +173,7 @@ class LocalClient(object):
 
         if auth_result[0] == -1 or auth_result[0] == 1:
             raise FahClientException("Unable to authenticate with server. Check that the password is correct.")
+
 
     # Reads data from the telnet stream after a command is sent.
     def __get_data(self, tn, expected_header):

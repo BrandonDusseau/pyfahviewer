@@ -1,13 +1,15 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 from concurrent.futures import ThreadPoolExecutor
 from .config import get_config
-from .fahclient import LocalClient, StatsClient
+from .fahclient import V7Client, V8Client, StatsClient
 from flask import Flask, render_template, jsonify, abort
+import asyncio
 import os
 
 app = Flask(__name__)
 stats_client = StatsClient()
-local_client = LocalClient()
+v7_client = V7Client()
+v8_client = V8Client()
 
 # Dictionary to cache mock files if used, so that we don't do a ton of I/O.
 mocks_cache = {}
@@ -37,21 +39,54 @@ def get_team():
 
 @app.route('/api/slots')
 def get_slots():
-    servers = get_config('servers')
+    configured_servers = get_config('servers')
 
-    if servers is not None and type(servers) is not list:
+    if configured_servers is not None and type(configured_servers) is not list:
         print('Configuration error: `servers` must be a list.')
         abort(500)
 
     if get_config('mock_slots'):
         return __get_mock('slots.json')
 
-    if servers is None or len(servers) == 0:
+    if configured_servers is None or len(configured_servers) == 0:
         print('Returning no slot data because no servers are configured.')
         return jsonify({'disabled': True})
 
+    servers = []
+    seen_hosts = set()
+    for server in configured_servers:
+        host = server.get("address")
+        password = server.get("password")
+        port = server.get("port", "7396")
+        client_version = server.get("clientVersion")
+
+        if host is None or host == "":
+            print('Configuration error: a server is missing the `address` property')
+            abort(500)
+
+        if password == "":
+            password = None
+
+        if host in seen_hosts:
+            print(f'Configuration error: server {host} is configured multiple times')
+            abort(500)
+        seen_hosts.add(host)
+
+        if str(client_version) == "8":
+            servers.append({
+                "address": host,
+                "port": port,
+                "isV8": True
+            })
+        else:
+            servers.append({
+                "address": host,
+                "password": password,
+                "isV8": False
+            })
+
     with ThreadPoolExecutor(max_workers=3) as executor:
-        slot_results = executor.map(local_client.get_slots_and_queues, servers)
+        slot_results = executor.map(__get_slot_data, servers)
 
     slots = []
     for slot_result in slot_results:
@@ -59,6 +94,17 @@ def get_slots():
             slots = slots + slot_result
 
     return jsonify({'slots': slots})
+
+
+def __get_slot_data(server):
+    if server["isV8"]:
+        # The websockets implementation requires asyncio, but we can't run async code in ThreadPoolExecutor.
+        # Instead, run this synchronously.
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        v8_coroutine = v8_client.get_slots_and_queues(server)
+        return loop.run_until_complete(v8_coroutine)
+    return v7_client.get_slots_and_queues(server)
 
 
 # Returns mock data from a file in the mocks/ directory.

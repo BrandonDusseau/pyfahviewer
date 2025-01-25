@@ -19,7 +19,7 @@
       resizeTimeout = setTimeout(onResize, 100);
     });
 
-    window.setInterval(loadData, 10000);
+    window.setInterval(loadData, 20000);
   });
 
   /**
@@ -210,21 +210,21 @@
     let percentDone = 0;
     let pointsDisplay = "&mdash;";
 
-    // There may not be a queue available if a slot has no work unit assigned and is paused.
-    if (slotData.queue !== null) {
-      percentCompleteText = slotData.queue.percentdone + " &middot; " + slotData.queue.eta;
-      percentDone = slotData.queue.percentdoneclean;
-      pointsDisplay = Number(slotData.queue.creditestimate).toLocaleString();
+    let state = slotData.status.toLowerCase();
+    if (state !== "paused" || state === "stopping" || state === "running") {
+      percentCompleteText = slotData.percentdone.toFixed(2).toLocaleString() + "% &middot; " + formatRemainingTime(slotData.eta);
+      percentDone = Math.floor(slotData.percentdone);
+      pointsDisplay = slotData.creditestimate.toLocaleString();
     }
 
-    // Note: FINISHING and READY use default styling.
-    let state = slotData.status.toLowerCase();
     if (state === "paused" || state === "stopping") {
       slotNode.querySelector(".progress-inner").classList.add("paused");
     } else if (state === "ready" || state === "uploading" || state === "downloading") {
       slotNode.querySelector(".progress-inner").classList.add("waiting");
       percentDone = 100;
-      percentCompleteText = "Retry in " + slotData.queue.nextattempt;
+      if (state === "uploading" || state === "downloading") {
+        percentCompleteText = "";
+      }
       pointsDisplay = "&mdash;";
     }
 
@@ -299,10 +299,34 @@
       return slot.name + " (" + slot.cores + ")";
     }
 
-    let re = /^(?:[^[]*\[)?([^\]]+)\]?/;
-    let match = slot.name.match(re);
+    return slot.name;
+  }
 
-    return (match !== null) ? match[1] : slot.name;
+  /**
+   * Formats the remaining time as a string.
+   * @param {Object} eta The remaining time.
+   * @returns {string} The formatted time.
+   */
+  function formatRemainingTime(eta) {
+    const output = [];
+
+    if (eta.days) {
+      output.push(eta.days + " day" + (eta.days > 1 ? "s" : ""));
+    }
+
+    if (eta.hours) {
+      output.push(eta.hours + " hour" + (eta.hours > 1 ? "s" : ""));
+    }
+
+    if (eta.minutes) {
+      output.push(eta.minutes + " min" + (eta.minutes > 1 ? "s" : ""));
+    }
+
+    if (eta.seconds) {
+      output.push(eta.seconds + " sec" + (eta.seconds > 1 ? "s" : ""));
+    }
+
+    return output.join(" ");
   }
 
   /**

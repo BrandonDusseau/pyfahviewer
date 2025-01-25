@@ -1,7 +1,6 @@
 import json
 import requests
 import time
-from .fahclientexception import FahClientException
 from datetime import datetime
 
 

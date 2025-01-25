@@ -1,7 +1,7 @@
 {
   "team": "1",
   "servers": [
-    {"address": "192.168.1.10", "password": "abcd1234"},
-    {"address": "192.168.1.11"}
+    {"address": "192.168.1.10", "password": "abcd1234", "clientVersion": "7"},
+    {"address": "192.168.1.11", "port": "7396", "clientVersion": "8"}
   ]
 }

@@ -16,7 +16,8 @@ class V8Client(object):
         server_port = server["port"]
 
         # Return data from cache if possible.
-        if self.slot_stats_cache.get(server_addr) is not None and round(time.time()) < self.slot_stats_expire.get(server_addr):
+        if (self.slot_stats_cache.get(server_addr) is not None
+            and round(time.time()) < self.slot_stats_expire.get(server_addr)):
             print("Returning cache data")
             return json.loads(self.slot_stats_cache.get(server_addr))
 
@@ -37,7 +38,8 @@ class V8Client(object):
 
         server_info = data.get("info", {})
         server_name = server_info.get("mach_name", server_addr)
-        gpu_names = {gpu_name: gpu_info.get("description", "Unknown GPU") for gpu_name, gpu_info in server_info.get("gpus", {}).items()}
+        gpus = server_info.get("gpus", {})
+        gpu_names = {gpu_name: gpu_info.get("description", "Unknown GPU") for gpu_name, gpu_info in gpus.items()}
         work_units = data.get("units", [])
         groups = data.get("groups", [])
 
@@ -114,7 +116,6 @@ class V8Client(object):
         print("Finished slots for '{0}'".format(server_addr))
         return slots
 
-
     def __get_slot_status(self, device, work_unit):
         if device["paused"]:
             return "paused"
@@ -132,7 +133,6 @@ class V8Client(object):
             return "uploading"
 
         return "running"
-
 
     def __get_time_remaining(self, work_unit):
         if work_unit is None:

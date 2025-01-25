@@ -18,7 +18,8 @@ class V7Client(object):
         server_pass = server["password"]
 
         # Return data from cache if possible.
-        if self.slot_stats_cache.get(server_addr) is not None and round(time.time()) < self.slot_stats_expire.get(server_addr):
+        if (self.slot_stats_cache.get(server_addr) is not None
+                and round(time.time()) < self.slot_stats_expire.get(server_addr)):
             return json.loads(self.slot_stats_cache.get(server_addr))
 
         print("Contacting v7 server '{0}'...".format(server_addr))
@@ -83,9 +84,10 @@ class V7Client(object):
         print("Finished slots for '{0}'".format(server_addr))
         return slots
 
-
     def __get_time_remaining(self, queue):
-        match = re.match(r"(?:(\d+) days?\s?)?(?:(\d+) hours?\s?)?(?:(\d+) mins?\s?)?(?:(\d+) secs?)?", queue.get("eta", ""))
+        match = re.match(
+            r"(?:(\d+) days?\s?)?(?:(\d+) hours?\s?)?(?:(\d+) mins?\s?)?(?:(\d+) secs?)?",
+            queue.get("eta", ""))
 
         if match is None:
             return (0, 0, 0, 0)
@@ -103,7 +105,6 @@ class V7Client(object):
         seconds = 0 if seconds_str is None else int(seconds_str)
 
         return (days, hours, minutes, seconds)
-
 
     # Manipulates the slot data to add clean values and inject the queue data.
     def __enhance_slots(self, slot_data, queue_data, server_addr):
@@ -140,7 +141,6 @@ class V7Client(object):
 
         return slot_data
 
-
     # Compares two queue entries. Returns a positive integer if stat1 has a status with a higher precedence than stat2.
     # Returns a negative number (stat2 > stat1) or zero (equal) otherwise.
     def __compare_queue_status(self, stat1, stat2):
@@ -156,7 +156,6 @@ class V7Client(object):
 
         return precedence.get(stat1, -1) - precedence.get(stat2, -1)
 
-
     # Reads the telnet stream until a F@H command prompt appears.
     def __wait_for_prompt(self, tn):
         prompt = "> "
@@ -165,7 +164,6 @@ class V7Client(object):
         if prompt_wait[-len(prompt):].decode() != prompt:
             raise FahClientException("Could not read prompt from telnet connection.")
 
-
     # Reads the telnet stream until a F@H auth response appears.
     def __wait_for_auth(self, tn):
         auth_expectation = ["OK\n".encode(), "\nPyON 1 error\n".encode()]
@@ -173,7 +171,6 @@ class V7Client(object):
 
         if auth_result[0] == -1 or auth_result[0] == 1:
             raise FahClientException("Unable to authenticate with server. Check that the password is correct.")
-
 
     # Reads data from the telnet stream after a command is sent.
     def __get_data(self, tn, expected_header):

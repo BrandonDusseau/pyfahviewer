@@ -1,147 +1,110 @@
 {
-  "active_50": 199,
-  "credit": 338878863,
-  "credit_cert": "",
-  "donors": [
+  "team": {
+    "fetch_time": "2025-01-25 17:11:49",
+    "founder": "NobodyAtAll",
+    "logo": null,
+    "name": "A Pretty Cool Team",
+    "rank": 649,
+    "score": 338878863,
+    "url": null,
+    "wus": 11547
+  },
+  "members": [
     {
-      "credit": 85690291,
-      "id": 999999999,
+      "score": 85690291,
       "name": "TriticumLupus",
       "rank": 6439,
-      "team": 0,
       "wus": 2315
     },
     {
-      "credit": 53612656,
-      "id": 999999998,
+      "score": 53612656,
       "name": "JorgeTheGreat",
       "rank": 9428,
-      "team": 0,
       "wus": 1253
     },
     {
-      "credit": 25213514,
-      "id": 999999997,
+      "score": 25213514,
       "name": "Dude59",
       "rank": 14048,
-      "team": 0,
       "wus": 395
     },
     {
-      "credit": 19817255,
-      "id": 999999996,
+      "score": 19817255,
       "name": "f0ld",
       "rank": 21883,
-      "team": 0,
       "wus": 678
     },
     {
-      "credit": 19244758,
-      "id": 999999995,
+      "score": 19244758,
       "name": "sam30",
       "rank": 23005,
-      "team": 0,
       "wus": 521
     },
     {
-      "credit": 17452316,
-      "id": 999999994,
+      "score": 17452316,
       "name": "iloveproteins",
       "rank": 25519,
-      "team": 0,
       "wus": 280
     },
     {
-      "credit": 14029715,
-      "id": 999999993,
+      "score": 14029715,
       "name": "gpu_burnout",
       "rank": 31844,
-      "team": 0,
       "wus": 312
     },
     {
-      "credit": 13115392,
-      "id": 999999992,
+      "score": 13115392,
       "name": "hunter2",
       "rank": 32795,
-      "team": 0,
       "wus": 158
     },
     {
-      "credit": 10255412,
-      "id": 999999991,
+      "score": 10255412,
       "name": "haha_my_power_bill",
       "rank": 15227,
-      "team": 0,
       "wus": 405
     },
     {
-      "credit": 9204945,
-      "id": 999999990,
+      "score": 9204945,
       "name": "RunsOnPizza",
       "rank": 45043,
-      "team": 0,
       "wus": 156
     },
     {
-      "credit": 8658689,
-      "id": 999999989,
+      "score": 8658689,
       "name": "WhistleWhileWeFold",
       "rank": 47620,
-      "team": 0,
       "wus": 339
     },
     {
-      "credit": 8568468,
-      "id": 999999988,
+      "score": 8568468,
       "name": "helpImOverheating",
       "rank": 48557,
-      "team": 0,
       "wus": 211
     },
     {
-      "credit": 8533139,
-      "id": 999999988,
+      "score": 8533139,
       "name": "pythonisNEAT",
       "rank": 47492,
-      "team": 0,
       "wus": 215
     },
     {
-      "credit": 7765603,
-      "id": 999999987,
+      "score": 7765603,
       "name": "14thPlace",
       "rank": 51759,
-      "team": 0,
       "wus": 400
     },
     {
-      "credit": 6571680,
-      "id": 999999986,
+      "score": 6571680,
       "name": "a-clever-user-name",
       "rank": 58729,
-      "team": 0,
       "wus": 185
     },
     {
-      "credit": 5458626,
-      "id": 999999986,
+      "score": 5458626,
       "name": "thisusershouldnotbedisplayed",
       "rank": 67690,
-      "team": 0,
       "wus": 276
     }
-  ],
-  "fast_team_url": "https://apps.foldingathome.org/teamstats/team0.html",
-  "fetch_time": "2020-05-03 19:36:55",
-  "last": "2020-05-03 23:25:40",
-  "logo": null,
-  "name": "A Pretty Cool Team",
-  "path": "team/0",
-  "rank": 649,
-  "team": 0,
-  "total_teams": 252944,
-  "url": null,
-  "wus": 11547,
-  "wus_cert": "https://apps.foldingathome.org/awards?team=0&type=wus"
+  ]
 }

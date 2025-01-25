@@ -211,10 +211,12 @@
     let pointsDisplay = "&mdash;";
 
     let state = slotData.status.toLowerCase();
-    if (state !== "paused" || state === "stopping" || state === "running") {
+    if (state === "paused" || state === "stopping" || state === "running") {
       percentCompleteText = slotData.percentdone.toFixed(2).toLocaleString() + "% &middot; " + formatRemainingTime(slotData.eta);
       percentDone = Math.floor(slotData.percentdone);
-      pointsDisplay = slotData.creditestimate.toLocaleString();
+      if (slotData.creditestimate) {
+        pointsDisplay = slotData.creditestimate.toLocaleString();
+      }
     }
 
     if (state === "paused" || state === "stopping") {

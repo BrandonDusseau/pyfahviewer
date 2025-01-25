@@ -72,6 +72,10 @@ def get_slots():
             abort(500)
         seen_hosts.add(host)
 
+        if client_version != "7" and client_version != "8":
+            print('Configuration error: a server has an invalid `clientVersion` property')
+            abort(500)
+
         if str(client_version) == "8":
             servers.append({
                 "address": host,

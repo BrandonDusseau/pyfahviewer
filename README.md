@@ -71,7 +71,7 @@ The parameters are as follows:
 
    * `port`: The port the Folding@Home client is listening on. For client v7 this has no effect. For client v8, the value will default to `7396` if not specified.
 
-   * `client` (required): The Folding@Home client version. Accepted values are `7` and `8`.
+   * `clientVersion` (required): The Folding@Home client version. Accepted values are `7` and `8`.
 
    * `password`: The password configured on the server. Omit this option if the server does not use a password. Authentication is also skipped if the password is null or the empty string. This has no effect on v8 clients.
 

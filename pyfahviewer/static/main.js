@@ -313,19 +313,19 @@
     const output = [];
 
     if (eta.days) {
-      output.push(eta.days + " day" + (eta.days > 0 ? "s" : ""));
+      output.push(eta.days + " day" + (eta.days > 1 ? "s" : ""));
     }
 
     if (eta.hours) {
-      output.push(eta.hours + " hour" + (eta.hours > 0 ? "s" : ""));
+      output.push(eta.hours + " hour" + (eta.hours > 1 ? "s" : ""));
     }
 
     if (eta.minutes) {
-      output.push(eta.minutes + " min" + (eta.minutes > 0 ? "s" : ""));
+      output.push(eta.minutes + " min" + (eta.minutes > 1 ? "s" : ""));
     }
 
     if (eta.seconds) {
-      output.push(eta.seconds + " sec" + (eta.seconds > 0 ? "s" : ""));
+      output.push(eta.seconds + " sec" + (eta.seconds > 1 ? "s" : ""));
     }
 
     return output.join(" ");

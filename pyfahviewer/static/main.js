@@ -223,11 +223,13 @@
       slotNode.querySelector(".progress-inner").classList.add("paused");
     } else if (state === "ready" || state === "uploading" || state === "downloading") {
       slotNode.querySelector(".progress-inner").classList.add("waiting");
+
+      // Set percent done to 100 so that the progress bar is colored fully.
       percentDone = 100;
+
       if (state === "uploading" || state === "downloading") {
         percentCompleteText = "";
       }
-      pointsDisplay = "&mdash;";
     }
 
     // Use forEach below to also fill in the value for the hidden minimized view.

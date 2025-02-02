@@ -117,12 +117,6 @@ class V8Client(object):
         return slots
 
     def __get_slot_status(self, device, work_unit):
-        if device["paused"]:
-            return "paused"
-
-        if device["finishing"]:
-            return "stopping"
-
         if work_unit is None:
             return "ready"
 
@@ -131,6 +125,12 @@ class V8Client(object):
 
         if work_unit.get("state") == "UPLOAD":
             return "uploading"
+
+        if device["paused"]:
+            return "paused"
+
+        if device["finishing"]:
+            return "stopping"
 
         return "running"
 
